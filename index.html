@@ -164,14 +164,11 @@ function findMeme (){
             //variable rn is used here at the image's source  
             var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
                         
-                imgDiv.append(makeImg);
-                imgDiv.prepend(docP);
-                $('.displayImage').html(imgDiv);
+            imgDiv.append(makeImg);
+            imgDiv.prepend(docP);
+            $('.displayImage').html(imgDiv);
 
-            });
-
-}
-
+        });
 //VOTING FUNCTION
 function voteRound(){
         seconds = 61;
