@@ -14,6 +14,9 @@ var database = firebase.database();
 var player = 0;
 var players = database.ref('players');
 var playerCounter = 0;
+// playerCounter = database.ref('playerCount').on("value", function (snap) {
+//     return snap.val();
+// });
 
 database.ref().set({
     players: JSON.stringify([]),
@@ -32,14 +35,17 @@ $(document).one('click', '.player-button', function(event) {
     var select = $(this);
     var selectArray = [select];
     database.ref('/players').push(1);
-    playerCounter++;   
-    database.ref().update({
-        // players: JSON.stringify([]),
-        // votes: 0,
-        // submits: 0,
-        playerCount: playerCounter});
+    database.ref().update({playerCount: playerCounter});
+    if(select.attr('id') == 'player-1') alert('hi player 1');
+    if(select.attr('id') == 'player-2') alert('hi player 2');
+    if(select.attr('id') == 'player-3') alert('hi player 3');
+    if(select.attr('id') == 'player-4') alert('hi player 4');
     console.log(playerCounter);
     console.log(select);
     event.preventDefault();
 })
 
+database.ref("players").on("child_added", function(snapshot) {
+    // storing the snapshot.val() in a variable for convenience
+    playerCounter++;
+});

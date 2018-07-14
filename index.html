@@ -138,8 +138,16 @@ function findMeme (){
 }
 
 //onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
+//EC
+var newButton, newInput;
+//EC
+
 $('button').on('click', function(){
     findMeme();
+    //Evans Code
+    newButton = $('<button>').text('Im new').addClass('newButton');
+    $('.displayImage').after(newButton);
+
     // if (checker == checker){
     //     findMeme();
     // }
@@ -149,6 +157,17 @@ $('button').on('click', function(){
     // }
     // console.log(success);
 });
+
+$(document).on('click', '.newButton', function() {
+    newButton.hide();
+    newInput = $("<input type='add text'>");
+    $('.displayImage').after(newInput);
+    console.log(newInput);
+
+})
+
+//Evans Code
+
 
 
 </script>
