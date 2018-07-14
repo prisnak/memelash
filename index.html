@@ -34,7 +34,7 @@ RULES:
 api key:
 ed0e5625-ed2d-4049-a830-bafce8b69716
 sample api link
-"http://version1.api.memegenerator.net//Generators_Search?q=rap&pageIndex=0&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716" -->
+"http://version1.api.memegenerator.net//Generators_Search?q=drunk&pageIndex=0&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716" -->
 <!-- "http://version1.api.memegenerator.net//Generators_Select_ByNew?pageIndex=0&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716" -->
 
 <!DOCTYPE html>
@@ -45,38 +45,50 @@ sample api link
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>meme generator</title>
     <style>
-        img {
+        .image, img{
             height: 80%;
-            width: 80%
+            width: 80%;
+            text-align: center;
+            margin: auto;
         }
-        .displayImage, .buttonContainer{
+        body{
             margin: auto;
             text-align: center;
         }
         * {
             font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
             text-transform: lowercase;
-            /* font-family: impact;
-            font-size: 2.5em;
-            text-transform: uppercase;
-            color: white;
-            letter-spacing: 1px;
-            text-shadow:2px 2px 0 #000; */
+
+        }
+        .displayImage {
+            margin: auto;
+            height: 50%;
+            width: 50%;
+            /* background-color: aquamarine; */
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<div class="buttonContainer"></div>
 
-<div class="displayImage"></div>
+
+<div class="buttonContainer"></div>
+<div class="timer"></div>
+<div class="inputContainer">
+        <div class="displayImage">
+
+        </div>
+</div>
+
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-    // these arrays will be used to plug into the queryURL to add more range and randomness to the meme search
+// these arrays will be used to plug into the queryURL to add more range and randomness to the meme search
 // var searchType = ['Generators_Search', 'Generators_Select_ByNew', 'Generators_Select_ByPopular', 'Generators_Select_ByTrending'];
-var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance'];
+var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
 var makeButton = $('<button>').text('meme');
     $('.buttonContainer').append(makeButton);
@@ -84,6 +96,47 @@ var rn = '';
 var success = '';
 var result = '';
 var checker = '';
+var docP = '';
+var userInput = [];
+var seconds = 61;
+var timer;
+var formDiv = $('<form>').addClass('formDiv');
+var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
+var submitButton = $('<input>').attr('type', 'submit').attr('value','submit').attr('id','submit');
+
+function createForm(){
+        textField.attr('placeholder','your caption');
+        formDiv.append(textField).append(submitButton);
+        $('.inputContainer').append(formDiv);
+}
+
+
+
+// TIMER FUNCTION
+function setTimer(){
+    seconds = seconds - 1;
+    var makeTimer = $('<p>').text(`Time Remaining: ${seconds}`);
+    $('.timer').html(makeTimer);
+
+    if (seconds === -1){
+        resetTimer();
+        // resetTimer();
+        // seconds = 61;
+        // timer = setInterval(1000);
+        // findMeme();
+        // docP.remove();;
+        // showResults();
+        // makeTimer.remove()
+    }
+}
+function resetTimer(){
+    seconds = 61;
+    clearInterval(timer);
+    findMeme();
+    timer = setInterval(setTimer, 1000);
+    docP.remove();
+    userInput = [];
+}
 
 //MEME GENERATOR FUNCTION
 
@@ -119,8 +172,10 @@ function findMeme (){
             // debugger;
                 console.log(response);
             //variable rn is used here at the image's source 
-            var imgDiv = $('<div>');
-            var docP = $('<p>').text(response.result[rn].displayName);
+            var imgDiv = $('<div>').addClass('image');
+                docP = $('<p>').attr('id','userText').text('');
+                
+            // var docP = $('<p>').attr('id','userText').html(response.result[rn].displayName);
             var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
                         
             imgDiv.append(makeImg);
@@ -136,19 +191,39 @@ function findMeme (){
         });
 
 }
-
+createForm();  
 //onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
 $('button').on('click', function(){
+    userInput = [];
+    createForm();  
+    seconds = 61;
+    clearInterval(timer);
     findMeme();
-    // if (checker == checker){
-    //     findMeme();
-    // }
-    // if (result.length === 0){
-    //     console.log('empty');
-    //     findMeme();
-    // }
-    // console.log(success);
+    timer = setInterval(setTimer, 1000);
+    docP.remove();
+  
+
 });
+
+//SUBMIT FUNCTION
+$('form #submit').on('click', function(){
+    event.preventDefault();
+    input = $('#text').val();
+    userInput.push(input);
+    
+       
+    if (input != ""){
+        var b = $('#userText');
+        b.text(input);
+        $('.inputContainer').prepend(b);
+        $('form').remove();
+        // $('#text').val("");
+        console.log(input);
+    }
+    else if (input == ''){
+        return;
+    }
+})
 
 
 </script>
