@@ -69,6 +69,9 @@ sample api link
         }
     </style>
 </head>
+
+
+
 <body>
 
 
@@ -82,16 +85,16 @@ sample api link
 </div>
 
 
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
 // these arrays will be used to plug into the queryURL to add more range and randomness to the meme search
 // var searchType = ['Generators_Search', 'Generators_Select_ByNew', 'Generators_Select_ByPopular', 'Generators_Select_ByTrending'];
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
-var makeButton = $('<button>').text('meme');
+var makeButton = $('<button>').text('meme').attr('id','start');
     $('.buttonContainer').append(makeButton);
+var voteButton = $('<button>').text('vote').attr('id','vote');
+    $('.buttonContainer').append(voteButton);
 var rn = '';
 var success = '';
 var result = '';
@@ -100,12 +103,16 @@ var docP = '';
 var userInput = [];
 var seconds = 61;
 var timer;
+// this empty array will hold all of the player's answers. 
+var topTwoA = [];
 var formDiv = $('<form>').addClass('formDiv');
 var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
 var submitButton = $('<input>').attr('type', 'submit').attr('value','submit').attr('id','submit');
+    formDiv.append(textField).append(submitButton);
+            $('.inputContainer').append(formDiv);
 
 function createForm(){
-        textField.attr('placeholder','your caption');
+        $('#text').val("");
         formDiv.append(textField).append(submitButton);
         $('.inputContainer').append(formDiv);
 }
@@ -120,27 +127,15 @@ function setTimer(){
 
     if (seconds === -1){
         resetTimer();
-        // resetTimer();
-        // seconds = 61;
-        // timer = setInterval(1000);
-        // findMeme();
-        // docP.remove();;
-        // showResults();
-        // makeTimer.remove()
     }
 }
-function resetTimer(){
-    seconds = 61;
-    clearInterval(timer);
-    findMeme();
-    timer = setInterval(setTimer, 1000);
-    docP.remove();
-    userInput = [];
-}
+
 
 //MEME GENERATOR FUNCTION
 
 function findMeme (){
+    formDiv.append(textField).append(submitButton);
+        $('.inputContainer').append(formDiv);
     //generate random number to pull a random object/image from the 25 memes pulled from the ajax response
     rn = Math.floor(Math.random()* 24) +1;
     
@@ -171,29 +166,46 @@ function findMeme (){
             result = parseInt(response.result);
             // debugger;
                 console.log(response);
-            //variable rn is used here at the image's source 
+            
             var imgDiv = $('<div>').addClass('image');
                 docP = $('<p>').attr('id','userText').text('');
-                
-            // var docP = $('<p>').attr('id','userText').html(response.result[rn].displayName);
+            //variable rn is used here at the image's source  
             var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
                         
-            imgDiv.append(makeImg);
-            imgDiv.prepend(docP);
-            $('.displayImage').html(imgDiv);
-                // var image = $('img');
-                // checker = image[0].src;
-                
-                if (result.length === 0){
-                    console.log('empty')
-                    return;
-                }
-        });
+                imgDiv.append(makeImg);
+                imgDiv.prepend(docP);
+                $('.displayImage').html(imgDiv);
+                    
+                    if (result.length === 0){
+                        console.log('empty')
+                        return;
+                    }
+            });
 
 }
-createForm();  
+
+//VOTING FUNCTION
+function voteRound(){
+        seconds = 61;
+        clearInterval(timer);
+        timer = setInterval(setTimer, 1000);
+        docP.remove();
+        userInput = [];
+    for (c in topTwoA){   
+        console.log(topTwoA[c]);
+        var a = topTwoA[c];     
+        var createChoices = $(`<input type="radio" name="a" value="${c}">`);
+        var createLabel = $('<label>');
+            createLabel.text(a);
+            $('.inputContainer').append(createChoices);
+            $('.inputContainer').append(createLabel); 
+        //     correctAnswerArray.push(triviaQuestions[index].correctAnswer);
+    }
+
+}
+  
 //onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
-$('button').on('click', function(){
+$('.buttonContainer #start').on('click', function(){
     userInput = [];
     createForm();  
     seconds = 61;
@@ -201,28 +213,33 @@ $('button').on('click', function(){
     findMeme();
     timer = setInterval(setTimer, 1000);
     docP.remove();
-  
-
 });
+//onclick test for results function
+$('.buttonContainer #vote').on('click', function(){
+    voteRound();
+})
 
 //SUBMIT FUNCTION
 $('form #submit').on('click', function(){
     event.preventDefault();
-    input = $('#text').val();
-    userInput.push(input);
+    var input = $('#text').val();
     
-       
-    if (input != ""){
+    if (topTwoA.length >= 2){
+        return;
+    }
+    if (input == ''){
+        return;
+    } 
+    else if (input != ""){
         var b = $('#userText');
         b.text(input);
         $('.inputContainer').prepend(b);
-        $('form').remove();
-        // $('#text').val("");
+        userInput.push(input);
+        topTwoA.push(input);
+        $('#text').val("");
         console.log(input);
     }
-    else if (input == ''){
-        return;
-    }
+
 })
 
 
