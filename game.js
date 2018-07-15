@@ -1,94 +1,7 @@
-<!-- meme generator multiplayer game
-3 players (for now) -use auth if we get far enough
-first page will show 4 buttons w/ 'player #'
-once first user selects player, a timer will start to countdown for 60 seconds.
-if countdown is complete and only 2 players have joined, game will not start. (else = start game)
-selected players will be stored in firebase as a value. 
+//EC
+var votesA = 0;
+var votesB = 0;
 
-second page will show prompt with all attending players and ask if they are ready
-click on ready and wait to begin
-once all players are ready, begin a 3 sec countdown
-
-next page will be first question
-display random meme. use found meme api
-60 second countdown to submit answer
-after 60 seconds, take no submits
-use timestamp to determine the first and second players that submitted
-answers get appended to page. last two get removed
-players will then vote for the funniest caption for the meme.
-
-if there is a draw on voting, person who submitted answer first, gets 1 point
-
-
-
-
-RULES:
-1. 3 player min.
-2. each round shows a meme on the screen, all players caption and submit
-3. first two submitted will be the ones voted for. all others are removed
-4. two submitted will be displayed for other players to vote for.
-5. highest voted submit wins. score +2
-6. if tie, user who submitted first score+1
-7. first to 10.
-
-api key:
-ed0e5625-ed2d-4049-a830-bafce8b69716
-sample api link
-"http://version1.api.memegenerator.net//Generators_Search?q=drunk&pageIndex=0&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716" -->
-<!-- "http://version1.api.memegenerator.net//Generators_Select_ByNew?pageIndex=0&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716" -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>meme generator</title>
-    <style>
-        .image, img{
-            height: 80%;
-            width: 80%;
-            text-align: center;
-            margin: auto;
-        }
-        body{
-            margin: auto;
-            text-align: center;
-        }
-        * {
-            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-            text-transform: lowercase;
-
-        }
-        .displayImage {
-            margin: auto;
-            height: 50%;
-            width: 50%;
-            /* background-color: aquamarine; */
-            text-align: center;
-        }
-    </style>
-</head>
-
-
-
-<body>
-
-
-
-<div class="buttonContainer"></div>
-<div class="timer"></div>
-<div class="inputContainer">
-        <div class="displayImage">
-
-        </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="game.js"></script>
-<!-- <script>
-// this arrays will be used to plug into the queryURL to add more range and randomness to the meme search
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
 var makeButton = $('<button>').text('meme').attr('id','start');
@@ -208,7 +121,19 @@ function showResults(){
         voted.text(topTwoA[q]);
         $('.inputContainer').prepend(voted);
         userVote = q;
-        debugger;
+        console.log(userVote);
+        //============================================
+        //EC
+        if(userVote == 0) {
+            console.log('first choice');
+            votesA++;
+            database.ref().update({votesA: votesA});
+        }
+        if(userVote == 1) {
+            console.log('second choice');
+            votesB++;
+            database.ref().update({votesB: votesB++});
+        }
 }
 
 
@@ -253,8 +178,77 @@ $('form #submit').on('click', function(){
 })
 
 
-</script> -->
-</body>
-</html>
 
-<!-- notes: 'https://memegenerator.net/img/images/10519337.jpg' image is not found -->
+//==========================================================================
+
+
+//Firebase Code
+
+var config = {
+    apiKey: "AIzaSyB8-0Nof8ZMt0-ax-P7fvqdTBM5_HSvGF0",
+    authDomain: "raiders-project.firebaseapp.com",
+    databaseURL: "https://raiders-project.firebaseio.com",
+    projectId: "raiders-project",
+    storageBucket: "raiders-project.appspot.com",
+    messagingSenderId: "849203199588"
+  };
+
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+var player = 0;
+var players = database.ref('players');
+var playerCounter = 0;
+// playerCounter = database.ref('playerCount').on("value", function (snap) {
+//     return snap.val();
+// });
+
+database.ref().set({
+    players: JSON.stringify([]),
+    votesA: 0,
+    votesB: 0,
+    submits: topTwoA.length,
+    playerCount: playerCounter
+})
+
+// database.ref('/players').on("value", function(snapshot) {
+//     player = snapshot.val().value;
+//     console.log(snapshot.val());
+    
+//   });
+
+$(document).one('click', '.player-button', function(event) {
+    var select = $(this);
+    var selectArray = [select];
+    // database.ref('/players').push(1);
+    database.ref('players').set({
+        id: select.attr('id'),
+        points: 0,
+    });
+    database.ref().update({playerCount: playerCounter});
+    if(select.attr('id') == 'player-1') alert('hi player 1');
+    if(select.attr('id') == 'player-2') alert('hi player 2');
+    if(select.attr('id') == 'player-3') alert('hi player 3');
+    if(select.attr('id') == 'player-4') alert('hi player 4');
+    console.log(playerCounter);
+    console.log(select);
+    event.preventDefault();
+})
+
+database.ref("players").on("child_added", function(snapshot) {
+    playerCounter++;;
+});
+
+
+$(document).on('click', '#vote', function() {
+    database.ref().update({submits: topTwoA.length});
+    
+})
+
+database.ref('submits').on("value", function(snap) {
+    console.log('submitted');
+  });
+database.ref('votesA').on("value", function(snap) {
+    console.log('votes');
+});
