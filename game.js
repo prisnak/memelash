@@ -40,6 +40,7 @@ $(document).one('click', '.player-button', function(event) {
     if(select.attr('id') == 'player-2') alert('hi player 2');
     if(select.attr('id') == 'player-3') alert('hi player 3');
     if(select.attr('id') == 'player-4') alert('hi player 4');
+    // if(selectArray.length > 1) return;
     console.log(playerCounter);
     console.log(select);
     event.preventDefault();
