@@ -1,7 +1,10 @@
 //EC
 var votesA = 0;
 var votesB = 0;
-
+var playerInfo;
+var uid;
+var submitNum = 0;
+//
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
 var makeButton = $('<button>').text('meme').attr('id','start');
@@ -134,6 +137,14 @@ function showResults(){
             votesB++;
             database.ref().update({votesB: votesB++});
         }
+        if(votesA > votesB) {
+            console.log('First option gets two points');
+            database.ref('players')
+        }
+        if(votesB > votesA) {
+            console.log('Second ooption gets two points');
+        }
+        //
 }
 
 
@@ -158,6 +169,7 @@ $('.buttonContainer #vote').on('click', function(){
 $('form #submit').on('click', function(){
     event.preventDefault();
     var input = $('#text').val();
+    console.log(uid);
     
     if (topTwoA.length >= 2){
         return;
@@ -166,6 +178,8 @@ $('form #submit').on('click', function(){
         return;
     } 
     else if (input != ""){
+        event.preventDefault();
+        
         var b = $('#userText');
         b.text(input);
         $('.inputContainer').prepend(b);
@@ -173,6 +187,12 @@ $('form #submit').on('click', function(){
         topTwoA.push(input);
         $('#text').val("");
         console.log(input);
+        database.ref('submits').set({
+            uid: uid,
+            answer: input
+        })
+        submitNum++;
+        database.ref().update({submitCounter: submitNum});
     }
 
 })
@@ -180,7 +200,7 @@ $('form #submit').on('click', function(){
 
 
 //==========================================================================
-
+//EC
 
 //Firebase Code
 
@@ -208,7 +228,8 @@ database.ref().set({
     players: JSON.stringify([]),
     votesA: 0,
     votesB: 0,
-    submits: topTwoA.length,
+    submits: JSON.stringify([]),
+    submitCounter: submitNum,
     playerCount: playerCounter
 })
 
@@ -218,33 +239,60 @@ database.ref().set({
     
 //   });
 
-$(document).one('click', '.player-button', function(event) {
+//AUTHENTICATION
+firebase.auth().signInAnonymously().catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // ...
+});
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        uid = user.uid;
+        console.log(user.uid);
+        // ...
+    } else {
+        // User is signed out.
+        // ...
+    }
+    // ...
+});
+
+var user = firebase.auth().currentUser;
+//user.updateProfile({
+//  points: 2;
+//})
+//
+
+$(document).on('click', '.btn', function(event) {
+    event.preventDefault();
     var select = $(this);
     var selectArray = [select];
-    // database.ref('/players').push(1);
-    database.ref('players').set({
-        id: select.attr('id'),
+    database.ref('players').child(uid).set({
+        player: select.attr('id'),
         points: 0,
     });
+    playerInfo = database.ref('players').child('player');
+    // console.log(playerInfo[0]);
     database.ref().update({playerCount: playerCounter});
-    if(select.attr('id') == 'player-1') alert('hi player 1');
-    if(select.attr('id') == 'player-2') alert('hi player 2');
-    if(select.attr('id') == 'player-3') alert('hi player 3');
-    if(select.attr('id') == 'player-4') alert('hi player 4');
+    if(select.attr('id') == '1') alert('hi player 1');
+    if(select.attr('id') == '2') alert('hi player 2');
+    if(select.attr('id') == '3') alert('hi player 3');
+    if(select.attr('id') == '4') alert('hi player 4');
     console.log(playerCounter);
     console.log(select);
-    event.preventDefault();
 })
 
 database.ref("players").on("child_added", function(snapshot) {
     playerCounter++;;
 });
 
-
-$(document).on('click', '#vote', function() {
-    database.ref().update({submits: topTwoA.length});
-    
-})
+// $(document).on('click', '#vote', function() {
+//     database.ref().update({submits: topTwoA.length});
+// })
 
 database.ref('submits').on("value", function(snap) {
     console.log('submitted');
@@ -252,3 +300,4 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
+//
