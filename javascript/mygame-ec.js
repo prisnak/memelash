@@ -267,21 +267,21 @@ var user = firebase.auth().currentUser;
 //})
 //
 
-$(document).on('click', '.player-button', function(event) {
+$(document).on('click', '.btn', function(event) {
     event.preventDefault();
     var select = $(this);
     var selectArray = [select];
     database.ref('players').child(uid).set({
-        id: select.attr('id'),
+        player: select.attr('id'),
         points: 0,
     });
     playerInfo = database.ref('players').child('player');
     // console.log(playerInfo[0]);
     database.ref().update({playerCount: playerCounter});
-    if(select.attr('id') == 'player-1') alert('hi player 1');
-    if(select.attr('id') == 'player-2') alert('hi player 2');
-    if(select.attr('id') == 'player-3') alert('hi player 3');
-    if(select.attr('id') == 'player-4') alert('hi player 4');
+    if(select.attr('id') == '1') alert('hi player 1');
+    if(select.attr('id') == '2') alert('hi player 2');
+    if(select.attr('id') == '3') alert('hi player 3');
+    if(select.attr('id') == '4') alert('hi player 4');
     console.log(playerCounter);
     console.log(select);
 })
