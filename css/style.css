@@ -1,0 +1,34 @@
+
+/*hiding checked image*/
+.hidden{
+	display: none;
+}
+
+/*font*/
+.h1, .h2, #meme, button, div{
+font-family: 'Anton', sans-serif;
+}
+
+/*close button*/
+.close{
+	font-size: 30px;
+}
+
+/*div with all scores */
+.divVotes{
+	width: 370px;
+}
+
+/*circle with score*/
+.rounded-circle{
+	height: 60px;
+
+}
+
+/*placeholder to the meme image*/
+.memeImage, .memeSubmit{
+	background-color: red;
+	height: 250px;
+	width: 370px;
+}
+
