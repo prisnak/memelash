@@ -108,17 +108,19 @@ function setTimer(){
     }
 
     if (pageIndex == 1){
-        if (seconds === -1){
+        if (seconds === 0){
             voteRound();
+            $('.gameNotifier').empty();
+            
         }
     }
     if (pageIndex == 2){
-        if (seconds === -1){
+        if (seconds === 0){
             showResults();
         }
     }
     if (pageIndex == 3){
-        if (seconds === -1){
+        if (seconds === 0){
             findMeme();
         }
     }
@@ -189,22 +191,25 @@ function voteRound(){
     pageIndex.push(page);
         $('.formContainer').empty();
     var resultButton = $('<button>').text('submit vote').attr('id','result');
-        seconds = 21;
+        seconds = 11;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
         docP.remove();
         userInput = [];
     for (c in topTwoA){   
         console.log(topTwoA[c]);
+        var notify = $('h2').text('vote for your favorite caption');
         var a = topTwoA[c];
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
             radioDiv.append(createChoices).append(createLabel);
+            $('.gameNotifier').html(notify);
             $('.voteContainer').append(radioDiv);
             $('.voteContainer').append(resultButton);
             
     }
+
 
 }
 
@@ -218,32 +223,24 @@ function showResults(){
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
     userInput = [];
+    var notify = $('h2').text('get ready for the next round');    
     var q = $(`input:radio[name='a']:checked`).val();
     var voted = $('<p>').addClass('#userText');
     voted.text(`the winner is: ${topTwoA[q]}`);
-
+        $('.gameNotifier').html(notify);
         $('.messageContainer').append(voted);
         // debugger;
         userVote = q;
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
+    if (userVote.length == 1){
+        return;
+    }
     showResults();
+
 })
 
-
-
-
-//test button to run function  
-$(document).on('click','#start', function(){
-    createForm();
-    findMeme();
-});
-
-//onclick test for vote function
-$(document).on('click','#vote', function(){
-    voteRound();
-})
 
 //SUBMIT FUNCTION
 $(document).on('click', '#submit', function(){

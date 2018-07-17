@@ -33,12 +33,16 @@
 	width: 370px;
 } */
 
-.image, .mainImg{
-	height: 50%;
-	width: 50%;
+.image img{
+	height: 30%;
+	width: 30%;
 	text-align: center;
 	margin: auto;
 }
+/* #gottaGoImg {
+	height: 100%;
+	width: 100%;
+} */
 
 #displayImage {
 	margin: auto;
