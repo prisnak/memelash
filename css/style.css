@@ -33,14 +33,14 @@
 	width: 370px;
 } */
 
-.image,{
-	height: 80%;
-	width: 80%;
+.image, .mainImg{
+	height: 50%;
+	width: 50%;
 	text-align: center;
 	margin: auto;
 }
 
-.displayImage {
+#displayImage {
 	margin: auto;
 	height: 50%;
 	width: 50%;

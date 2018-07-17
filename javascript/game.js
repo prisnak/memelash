@@ -21,7 +21,7 @@ var pageIndex = [];
 var playerActive = [];
 
 
-// hide check image
+//START SCREEN. PAGE 0
 $(document).on("click", ".container button", function(){
     var player = $(this).attr("id");
     var page = 0;
@@ -47,7 +47,7 @@ $(document).on("click", ".container button", function(){
     } 
     if (playerActive.length == 3){
         $('#h2P').text('all set! get ready!');
-        seconds = 21;
+        seconds = 11;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
     } 
@@ -80,8 +80,8 @@ function createForm(){
 // TIMER FUNCTION
 function setTimer(){
     seconds = seconds - 1;
-    var makeTimer = $('<p>').text(`Time Remaining: ${seconds}`);
-    $('.timer').html(makeTimer);
+    var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
+    $('#title').html(makeTimer);
     if (pageIndex == 0){
         if (seconds == 3){
             $('#h2P').text('ready?');
@@ -98,10 +98,10 @@ function setTimer(){
             $('#mainImg').empty();
             $('#title').empty();
             $('#h2P').empty();
-        var makeButton = $('<button>').text('meme').attr('id','start');
-            $('.buttonContainer').append(makeButton);
-        var voteButton = $('<button>').text('vote').attr('id','vote');
-            $('.buttonContainer').append(voteButton);
+        // var makeButton = $('<button>').text('meme').attr('id','start');
+        //     $('.container').append(makeButton);
+        // var voteButton = $('<button>').text('vote').attr('id','vote');
+        //     $('.container').append(voteButton);
             findMeme();
             createForm();
         }
@@ -127,13 +127,14 @@ function setTimer(){
 
 
 //MEME GENERATOR FUNCTION
-
+//will we need to make the response's imgUrl a firebase var so that all users see the same image?
 function findMeme (){
     pageIndex = [];
     var page = 1;
     pageIndex.push(1);
     userInput = [];
     topTwoA = [];
+    $('.h2P').empty();
     $('.messageContainer').empty();
     $('.voteContainer').empty();
 
@@ -219,8 +220,10 @@ function showResults(){
     userInput = [];
     var q = $(`input:radio[name='a']:checked`).val();
     var voted = $('<p>').addClass('#userText');
-        voted.text(topTwoA[q]);
-        $('.messageContainer').append(`the winner is: ${voted}`);
+    voted.text(`the winner is: ${topTwoA[q]}`);
+
+        $('.messageContainer').append(voted);
+        // debugger;
         userVote = q;
 }
 //RESULTS ONCLICK FUNCTION
@@ -231,8 +234,7 @@ $(document).on('click','#result', function(){
 
 
 
-  
-//onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
+//test button to run function  
 $(document).on('click','#start', function(){
     createForm();
     findMeme();
