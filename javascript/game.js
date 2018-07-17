@@ -1,20 +1,69 @@
+console.log('hi');
+var votesA = 0;
+var votesB = 0;
+var playerInfo;
+var uid;
+var submitNum = 0;
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
-var makeButton = $('<button>').text('meme').attr('id','start');
-    $('.buttonContainer').append(makeButton);
-var voteButton = $('<button>').text('vote').attr('id','vote');
-    $('.buttonContainer').append(voteButton);
 
 var rn = '';
 var docP = '';
 // this stores user's input
 var userInput = [];
-var seconds = 61;
+var seconds;
 var timer;
 // this empty array will hold all of the player's answers. 
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
 var pageIndex = [];
+var playerActive = [];
+
+
+// hide check image
+$(document).on("click", ".container button", function(){
+    var player = $(this).attr("id");
+    var page = 0;
+    if (player == 1){
+      $("#check1").removeClass("hidden");
+        playerActive.push(player);
+        pageIndex.push(page);
+    } else if(player == 2){
+      $("#check2").removeClass("hidden");
+        playerActive.push(player);
+    } else if (player == 3){
+      $("#check3").removeClass("hidden");
+        playerActive.push(player);
+    } else if (player == 4){
+      $("#check4").removeClass("hidden");
+        playerActive.push(player);
+    }
+    if (playerActive.length == 1){
+        $('#h2P').text('waiting for more players...');
+    } 
+    if (playerActive.length == 2){
+        $('#h2P').text('almost ready!');
+    } 
+    if (playerActive.length == 3){
+        $('#h2P').text('all set! get ready!');
+        seconds = 21;
+        clearInterval(timer);
+        timer = setInterval(setTimer, 1000);
+    } 
+    
+})
+
+
+// Waiting the other players message
+// $("#submit").on("click", function(){
+//   var waiting = $("<p>");
+//   waiting.text("WAITING THE OTHER PLAYERS :) ");
+//   waiting.attr("class", "mx-auto m-5 text-center");
+
+//   $("#memeCaption").remove();
+//   $(".container").append(waiting); 
+
+// });
 
 function createForm(){
     var formDiv = $('<form>').addClass('formDiv');
@@ -32,6 +81,31 @@ function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<p>').text(`Time Remaining: ${seconds}`);
     $('.timer').html(makeTimer);
+    if (pageIndex == 0){
+        if (seconds == 3){
+            $('#h2P').text('ready?');
+        }
+        if (seconds == 2){
+            $('#h2P').text('set');
+        }
+        if (seconds == 1){
+            $('#h2P').text('meme!');
+        }
+        if(seconds <= 0){
+            console.log('true');
+            $('.container').empty();
+            $('#mainImg').empty();
+            $('#title').empty();
+            $('#h2P').empty();
+        var makeButton = $('<button>').text('meme').attr('id','start');
+            $('.buttonContainer').append(makeButton);
+        var voteButton = $('<button>').text('vote').attr('id','vote');
+            $('.buttonContainer').append(voteButton);
+            findMeme();
+            createForm();
+        }
+    }
+
     if (pageIndex == 1){
         if (seconds === -1){
             voteRound();
@@ -42,7 +116,7 @@ function setTimer(){
             showResults();
         }
     }
-    if (pageIndex == 2){
+    if (pageIndex == 3){
         if (seconds === -1){
             findMeme();
         }
@@ -62,13 +136,12 @@ function findMeme (){
     $('.messageContainer').empty();
     $('.voteContainer').empty();
 
+    createForm();
+
     //timer
-    seconds = 31;
+    seconds = 21;
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
-
-    // formDiv.append(textField).append(submitButton);
-    //     $('.formContainer').append(formDiv);
 
     //generate random number to pull a random object/image from the 25 memes pulled from the ajax response
     rn = Math.floor(Math.random()* 24) +1;
@@ -114,7 +187,7 @@ function voteRound(){
     pageIndex.push(page);
         $('.formContainer').empty();
     var resultButton = $('<button>').text('submit vote').attr('id','result');
-        seconds = 31;
+        seconds = 21;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
         docP.remove();
@@ -146,7 +219,7 @@ function showResults(){
     var q = $(`input:radio[name='a']:checked`).val();
     var voted = $('<p>').addClass('#userText');
         voted.text(topTwoA[q]);
-        $('.messageContainer').append(voted);
+        $('.messageContainer').append(`the winner is: ${voted}`);
         userVote = q;
 }
 //RESULTS ONCLICK FUNCTION
@@ -159,13 +232,13 @@ $(document).on('click','#result', function(){
 
   
 //onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
-$('.buttonContainer #start').on('click', function(){
+$(document).on('click','#start', function(){
     createForm();
     findMeme();
 });
 
 //onclick test for vote function
-$('.buttonContainer #vote').on('click', function(){
+$(document).on('click','#vote', function(){
     voteRound();
 })
 
@@ -187,12 +260,117 @@ $(document).on('click', '#submit', function(){
         userInput.push(input);
         topTwoA.push(input);
         $('#text').val("");
-        console.log(input);
+        database.ref('submits').set({
+            uid: uid,
+            answer: input
+        })
+        submitNum++;
+        database.ref().update({submitCounter: submitNum});
+
     }
 
 })
 
-if (topTwoA.length == 2){
+if (topTwoA.length === 2){
     console.log('true');
-    voteRound();
+    // voteRound();
 };
+
+//Firebase Code
+
+var config = {
+    apiKey: "AIzaSyB8-0Nof8ZMt0-ax-P7fvqdTBM5_HSvGF0",
+    authDomain: "raiders-project.firebaseapp.com",
+    databaseURL: "https://raiders-project.firebaseio.com",
+    projectId: "raiders-project",
+    storageBucket: "raiders-project.appspot.com",
+    messagingSenderId: "849203199588"
+  };
+
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+var player = 0;
+var players = database.ref('players');
+var playerCounter = 0;
+// playerCounter = database.ref('playerCount').on("value", function (snap) {
+//     return snap.val();
+// });
+
+database.ref().set({
+    players: JSON.stringify([]),
+    votesA: 0,
+    votesB: 0,
+    submits: JSON.stringify([]),
+    submitCounter: submitNum,
+    playerCount: playerCounter
+})
+
+// database.ref('/players').on("value", function(snapshot) {
+//     player = snapshot.val().value;
+//     console.log(snapshot.val());
+    
+//   });
+
+//AUTHENTICATION
+firebase.auth().signInAnonymously().catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // ...
+});
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        uid = user.uid;
+        console.log(user.uid);
+        // ...
+    } else {
+        // User is signed out.
+        // ...
+    }
+    // ...
+});
+
+var user = firebase.auth().currentUser;
+//user.updateProfile({
+//  points: 2;
+//})
+//
+
+$(document).on('click', '.btn', function(event) {
+    event.preventDefault();
+    var select = $(this);
+    var selectArray = [select];
+    database.ref('players').child(uid).set({
+        player: select.attr('id'),
+        points: 0,
+    });
+    playerInfo = database.ref('players').child('player');
+    // console.log(playerInfo[0]);
+    database.ref().update({playerCount: playerCounter});
+    if(select.attr('id') == '1') alert('hi player 1');
+    if(select.attr('id') == '2') alert('hi player 2');
+    if(select.attr('id') == '3') alert('hi player 3');
+    if(select.attr('id') == '4') alert('hi player 4');
+    console.log(playerCounter);
+    console.log(select);
+})
+
+database.ref("players").on("child_added", function(snapshot) {
+    playerCounter++;;
+});
+
+// $(document).on('click', '#vote', function() {
+//     database.ref().update({submits: topTwoA.length});
+// })
+
+database.ref('submits').on("value", function(snap) {
+    console.log('submitted');
+  });
+database.ref('votesA').on("value", function(snap) {
+    console.log('votes');
+});

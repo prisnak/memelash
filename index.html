@@ -9,15 +9,23 @@
 	<!-- Google fonts -->
 	<link href="https://fonts.googleapis.com/css?family=Anton" rel="stylesheet">
 
-	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<!-- <link rel="stylesheet" type="text/css" href="css/reset.css"> -->
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 
 </head>
 
 <body id="corpo">
 
+        <div class="buttonContainer"></div>
+        <div class="timer"></div>
+        <div class="inputContainer">
+                <div class="messageContainer"></div>
+                <div class="displayImage"></div>
+                <div class="formContainer"></div>
+                <div class="voteContainer"></div>
+        </div>
 	<!-- game name -->
-	<h1 class="h1 text-center mx-auto m-2">MEMELASH</h2>
+	<h1 class="h1 text-center mx-auto m-2" id='title'>MEMELASH</h1>
 
 	<!-- homepage main image: Gotta Go Fast-->
 	<div id="mainImg">
@@ -25,7 +33,7 @@
 	</div>
 
 	<!-- text -->
-	<h2 class="h2 row justify-content-sm-center m-5">PICK A PLAYER TO PLAY</h2>
+	<h2 class="h2 row justify-content-sm-center m-5" id='h2P'>PICK A PLAYER TO PLAY</h2>
 
 	<!-- div with players buttons and checked images -->
 	<div class="container">
@@ -56,7 +64,7 @@
  <!-- JQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<script type="text/javascript" src="assets/javascript/gif.js"></script>
+<script type="text/javascript" src="javascript/game.js"></script>
 
 </body>
 </html>

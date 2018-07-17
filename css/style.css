@@ -5,8 +5,9 @@
 }
 
 /*font*/
-.h1, .h2, #meme, button, div{
-font-family: 'Anton', sans-serif;
+*{
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	text-transform: lowercase;
 }
 
 /*close button*/
@@ -26,9 +27,28 @@ font-family: 'Anton', sans-serif;
 }
 
 /*placeholder to the meme image*/
-.memeImage, .memeSubmit{
+/* .memeImage, .memeSubmit{
 	background-color: red;
 	height: 250px;
 	width: 370px;
+} */
+
+.image,{
+	height: 80%;
+	width: 80%;
+	text-align: center;
+	margin: auto;
+}
+
+.displayImage {
+	margin: auto;
+	height: 50%;
+	width: 50%;
+	text-align: center;
+}
+
+body{
+	margin: auto;
+	text-align: center;
 }
 
