@@ -1,4 +1,5 @@
-console.log('hi');
+//new branch 2018-07-16
+console.log('new branch "ju-20180716-integrated"');
 var votesA = 0;
 var votesB = 0;
 var playerInfo;
@@ -16,27 +17,52 @@ var timer;
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
-var pageIndex = [];
+var pageIndex = [0];
 var playerActive = [];
 
+//GENERATE SCORE KEEPER FUNCTION
+// function scoreKeeper(){
+//     var scoreIcon = $('<div>').addClass('score');
+//     var playerIcon;
+//     if (playerActive.length == 1){
+//         // playerActive.find(1);
+//         console.log(true);
+//     }
+    
+// }
+// scoreKeeper();
+var scoreIcon;
+var scoreSpan;
 
-// hide check image
+
+//START SCREEN.
 $(document).on("click", ".container button", function(){
-    var player = $(this).attr("id");
-    var page = 0;
+    var player = parseInt($(this).attr("id"));
+     scoreIcon = $('<div>').addClass('score');
+     scoreSpan = $('<span>').attr('id','counter').text(0);
+        scoreIcon.append(scoreSpan);
+
     if (player == 1){
       $("#check1").removeClass("hidden");
         playerActive.push(player);
-        pageIndex.push(page);
+        scoreIcon.attr('id','player1');
+        $('.scoreDiv').append(scoreIcon);
+
     } else if(player == 2){
       $("#check2").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player2');
+        $('.scoreDiv').append(scoreIcon);
     } else if (player == 3){
       $("#check3").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player3');
+        $('.scoreDiv').append(scoreIcon);
     } else if (player == 4){
       $("#check4").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player4');
+        $('.scoreDiv').append(scoreIcon);
     }
     if (playerActive.length == 1){
         $('#h2P').text('waiting for more players...');
@@ -46,7 +72,7 @@ $(document).on("click", ".container button", function(){
     } 
     if (playerActive.length == 3){
         $('#h2P').text('all set! get ready!');
-        seconds = 21;
+        seconds = 11;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
     } 
@@ -79,8 +105,8 @@ function createForm(){
 // TIMER FUNCTION
 function setTimer(){
     seconds = seconds - 1;
-    var makeTimer = $('<p>').text(`Time Remaining: ${seconds}`);
-    $('.timer').html(makeTimer);
+    var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
+    $('#title').html(makeTimer);
     if (pageIndex == 0){
         if (seconds == 3){
             $('#h2P').text('ready?');
@@ -97,27 +123,29 @@ function setTimer(){
             $('#mainImg').empty();
             $('#title').empty();
             $('#h2P').empty();
-        var makeButton = $('<button>').text('meme').attr('id','start');
-            $('.buttonContainer').append(makeButton);
-        var voteButton = $('<button>').text('vote').attr('id','vote');
-            $('.buttonContainer').append(voteButton);
+        // var makeButton = $('<button>').text('meme').attr('id','start');
+        //     $('.container').append(makeButton);
+        // var voteButton = $('<button>').text('vote').attr('id','vote');
+        //     $('.container').append(voteButton);
             findMeme();
             createForm();
         }
     }
 
     if (pageIndex == 1){
-        if (seconds === -1){
+        if (seconds === 0){
             voteRound();
+            $('.gameNotifier').empty();
+            
         }
     }
     if (pageIndex == 2){
-        if (seconds === -1){
+        if (seconds === 0){
             showResults();
         }
     }
     if (pageIndex == 3){
-        if (seconds === -1){
+        if (seconds === 0){
             findMeme();
         }
     }
@@ -126,13 +154,14 @@ function setTimer(){
 
 
 //MEME GENERATOR FUNCTION
-
+//will we need to make the response's imgUrl a firebase var so that all users see the same image?
 function findMeme (){
     pageIndex = [];
     var page = 1;
     pageIndex.push(1);
     userInput = [];
     topTwoA = [];
+    $('.gameNotifier').empty();
     $('.messageContainer').empty();
     $('.voteContainer').empty();
 
@@ -187,22 +216,25 @@ function voteRound(){
     pageIndex.push(page);
         $('.formContainer').empty();
     var resultButton = $('<button>').text('submit vote').attr('id','result');
-        seconds = 21;
+        seconds = 11;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
         docP.remove();
         userInput = [];
     for (c in topTwoA){   
         console.log(topTwoA[c]);
+        var notify = $('h2').text('vote for your favorite caption');
         var a = topTwoA[c];
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
             radioDiv.append(createChoices).append(createLabel);
+            $('.gameNotifier').append(notify);
             $('.voteContainer').append(radioDiv);
             $('.voteContainer').append(resultButton);
             
     }
+
 
 }
 
@@ -216,31 +248,24 @@ function showResults(){
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
     userInput = [];
+    var notify = $('h2').text('get ready for the next round');    
     var q = $(`input:radio[name='a']:checked`).val();
     var voted = $('<p>').addClass('#userText');
-        voted.text(topTwoA[q]);
-        $('.messageContainer').append(`the winner is: ${voted}`);
+    voted.text(`the winner is: ${topTwoA[q]}`);
+        $('.gameNotifier').html(notify);
+        $('.messageContainer').append(voted);
+        // debugger;
         userVote = q;
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
+    if (userVote.length == 1){
+        return;
+    }
     showResults();
+
 })
 
-
-
-
-  
-//onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
-$(document).on('click','#start', function(){
-    createForm();
-    findMeme();
-});
-
-//onclick test for vote function
-$(document).on('click','#vote', function(){
-    voteRound();
-})
 
 //SUBMIT FUNCTION
 $(document).on('click', '#submit', function(){
@@ -271,10 +296,15 @@ $(document).on('click', '#submit', function(){
 
 })
 
-if (topTwoA.length === 2){
-    console.log('true');
-    // voteRound();
-};
+
+// function pageReader(){
+//     if (topTwoA.length === 2){
+//         console.log(true);
+//         // voteRound();
+//     };
+// }
+// pageReader();
+
 
 //Firebase Code
 
@@ -374,3 +404,4 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
+//
