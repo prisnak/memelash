@@ -17,20 +17,10 @@ var timer;
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
+//this array will help cycle through input, vote, and result rounds
 var pageIndex = [0];
 var playerActive = [];
 
-//GENERATE SCORE KEEPER FUNCTION
-// function scoreKeeper(){
-//     var scoreIcon = $('<div>').addClass('score');
-//     var playerIcon;
-//     if (playerActive.length == 1){
-//         // playerActive.find(1);
-//         console.log(true);
-//     }
-    
-// }
-// scoreKeeper();
 var scoreIcon;
 var scoreSpan;
 
@@ -80,17 +70,6 @@ $(document).on("click", ".container button", function(){
 })
 
 
-// Waiting the other players message
-// $("#submit").on("click", function(){
-//   var waiting = $("<p>");
-//   waiting.text("WAITING THE OTHER PLAYERS :) ");
-//   waiting.attr("class", "mx-auto m-5 text-center");
-
-//   $("#memeCaption").remove();
-//   $(".container").append(waiting); 
-
-// });
-
 function createForm(){
     var formDiv = $('<form>').addClass('formDiv');
     var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
@@ -100,13 +79,21 @@ function createForm(){
         $('.formContainer').html(formDiv);
 }
 
+function pageReader(){
+    if (topTwoA.length == 2){
 
+        console.log(true);
+        voteRound();
+    }else(console.log(false));
+}
 
 // TIMER FUNCTION
 function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
     $('#title').html(makeTimer);
+    
+    
     if (pageIndex == 0){
         if (seconds == 3){
             $('#h2P').text('ready?');
@@ -133,6 +120,7 @@ function setTimer(){
     }
 
     if (pageIndex == 1){
+        pageReader();
         if (seconds === 0){
             voteRound();
             $('.gameNotifier').empty();
@@ -154,13 +142,13 @@ function setTimer(){
 
 
 //MEME GENERATOR FUNCTION
-//will we need to make the response's imgUrl a firebase var so that all users see the same image?
 function findMeme (){
     pageIndex = [];
     var page = 1;
-    pageIndex.push(1);
+    pageIndex.push(page);
     userInput = [];
     topTwoA = [];
+    userVote = [];
     $('.gameNotifier').empty();
     $('.messageContainer').empty();
     $('.voteContainer').empty();
@@ -254,7 +242,6 @@ function showResults(){
     voted.text(`the winner is: ${topTwoA[q]}`);
         $('.gameNotifier').html(notify);
         $('.messageContainer').append(voted);
-        // debugger;
         userVote = q;
 }
 //RESULTS ONCLICK FUNCTION
@@ -285,26 +272,16 @@ $(document).on('click', '#submit', function(){
         userInput.push(input);
         topTwoA.push(input);
         $('#text').val("");
+        console.log(topTwoA.length);
         database.ref('submits').set({
             uid: uid,
             answer: input
         })
         submitNum++;
         database.ref().update({submitCounter: submitNum});
-
     }
 
 })
-
-
-// function pageReader(){
-//     if (topTwoA.length === 2){
-//         console.log(true);
-//         // voteRound();
-//     };
-// }
-// pageReader();
-
 
 //Firebase Code
 
