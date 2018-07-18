@@ -297,11 +297,14 @@ $(document).on('click', '#submit', function(){
 })
 
 
+// function pageReader(){
+//     if (topTwoA.length === 2){
+//         console.log(true);
+//         // voteRound();
+//     };
+// }
+// pageReader();
 
-if (topTwoA.length === 2){
-    console.log('true');
-    // voteRound();
-};
 
 //Firebase Code
 
