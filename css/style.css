@@ -10,7 +10,7 @@
 	text-transform: lowercase;
 }
 body{
-	margin: auto;
+	/*margin: auto;*/
 	text-align: center;
 }
 
@@ -24,12 +24,6 @@ body{
 	width: 370px;
 }
 
-/*circle with score*/
-.rounded-circle{
-	height: 60px;
-
-}
-
 /*placeholder to the meme image*/
 /* .memeImage, .memeSubmit{
 	background-color: red;
@@ -38,15 +32,10 @@ body{
 } */
 
 .image img{
-	height: 30%;
-	width: 30%;
+	height: 264px;
+	width: 370px;
 	text-align: center;
-	margin: auto;
 }
-/* #gottaGoImg {
-	height: 100%;
-	width: 100%;
-} */
 
 #displayImage {
 	margin: auto;
@@ -55,13 +44,14 @@ body{
 	text-align: center;
 }
 .scoreDiv {
-	width: 100%;
+	width: 370px;
 	height: 75px;
 	/* can remove background color later. just for ref */
 	/* background-color: silver; */
-	padding: 20px;
+	/*padding: 30px;*/
 	text-align: center;
 }
+
 .score {
 	text-align: center; 
 	float: left;
@@ -74,16 +64,20 @@ body{
     width: 30px;
     padding: 3px;
 }
-#player1 {
-	background-color: goldenrod;
+#player1 { 
+	height: 100%; 
+	width: 70px;
 }
-#player2 {
-	background-color: crimson;
+#player2 { 
+	height: 100%; 
+	width: 70px;
 }
-#player3 {
-	background-color: dodgerblue;
+#player3 { 
+	height: 100%;
+	width: 70px; 
 }
-#player4 {
-	background-color: darkseagreen;
+#player4 { 
+	height: 100%; 
+	width: 70px;
 }
 

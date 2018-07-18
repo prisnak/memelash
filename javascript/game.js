@@ -27,7 +27,7 @@ var scoreSpan;
 //START SCREEN.
 $(document).on("click", ".container button", function(){
     var player = parseInt($(this).attr("id"));
-     scoreIcon = $('<div>').addClass('score');
+     scoreIcon = $('<span>').addClass('score');
      scoreSpan = $('<span>').attr('id','counter').text(0);
         scoreIcon.append(scoreSpan);
 
@@ -35,22 +35,30 @@ $(document).on("click", ".container button", function(){
       $("#check1").removeClass("hidden");
         playerActive.push(player);
         scoreIcon.attr('id','player1');
+        scoreIcon.addClass('m-2 rounded-circle bg-warning text-center text-white numberVote')
+        $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
 
     } else if(player == 2){
       $("#check2").removeClass("hidden");
         playerActive.push(player);
         scoreIcon.attr('id','player2');
+        scoreIcon.addClass('m-2 rounded-circle bg-danger text-center text-white numberVote')
+        $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
     } else if (player == 3){
       $("#check3").removeClass("hidden");
         playerActive.push(player);
         scoreIcon.attr('id','player3');
+        $('.scoreDiv').removeClass("hidden")
+        scoreIcon.addClass('m-2 rounded-circle bg-primary text-center text-white numberVote')
         $('.scoreDiv').append(scoreIcon);
     } else if (player == 4){
       $("#check4").removeClass("hidden");
         playerActive.push(player);
         scoreIcon.attr('id','player4');
+        scoreIcon.addClass('m-2 rounded-circle bg-success text-center text-white numberVote')
+        $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
     }
     if (playerActive.length == 1){

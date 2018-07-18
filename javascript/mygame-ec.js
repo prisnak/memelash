@@ -418,3 +418,4 @@ $(document).on('click', '.submit-vote', function () {
     }
 })
 
+// val().rating
