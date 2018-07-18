@@ -1,5 +1,5 @@
 //new branch 2018-07-16
-console.log('hi');
+console.log('new branch "ju-20180716-integrated"');
 var votesA = 0;
 var votesB = 0;
 var playerInfo;
@@ -17,27 +17,52 @@ var timer;
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
-var pageIndex = [];
+var pageIndex = [0];
 var playerActive = [];
 
+//GENERATE SCORE KEEPER FUNCTION
+// function scoreKeeper(){
+//     var scoreIcon = $('<div>').addClass('score');
+//     var playerIcon;
+//     if (playerActive.length == 1){
+//         // playerActive.find(1);
+//         console.log(true);
+//     }
+    
+// }
+// scoreKeeper();
+var scoreIcon;
+var scoreSpan;
 
-//START SCREEN. PAGE 0
+
+//START SCREEN.
 $(document).on("click", ".container button", function(){
-    var player = $(this).attr("id");
-    var page = 0;
+    var player = parseInt($(this).attr("id"));
+     scoreIcon = $('<div>').addClass('score');
+     scoreSpan = $('<span>').attr('id','counter').text(0);
+        scoreIcon.append(scoreSpan);
+
     if (player == 1){
       $("#check1").removeClass("hidden");
         playerActive.push(player);
-        pageIndex.push(page);
+        scoreIcon.attr('id','player1');
+        $('.scoreDiv').append(scoreIcon);
+
     } else if(player == 2){
       $("#check2").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player2');
+        $('.scoreDiv').append(scoreIcon);
     } else if (player == 3){
       $("#check3").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player3');
+        $('.scoreDiv').append(scoreIcon);
     } else if (player == 4){
       $("#check4").removeClass("hidden");
         playerActive.push(player);
+        scoreIcon.attr('id','player4');
+        $('.scoreDiv').append(scoreIcon);
     }
     if (playerActive.length == 1){
         $('#h2P').text('waiting for more players...');
@@ -136,7 +161,7 @@ function findMeme (){
     pageIndex.push(1);
     userInput = [];
     topTwoA = [];
-    $('.h2P').empty();
+    $('.gameNotifier').empty();
     $('.messageContainer').empty();
     $('.voteContainer').empty();
 
@@ -204,7 +229,7 @@ function voteRound(){
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
             radioDiv.append(createChoices).append(createLabel);
-            $('.gameNotifier').html(notify);
+            $('.gameNotifier').append(notify);
             $('.voteContainer').append(radioDiv);
             $('.voteContainer').append(resultButton);
             
@@ -270,6 +295,8 @@ $(document).on('click', '#submit', function(){
     }
 
 })
+
+
 
 if (topTwoA.length === 2){
     console.log('true');
@@ -374,3 +401,4 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
+//
