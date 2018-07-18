@@ -20,17 +20,6 @@ var userVote = [];
 var pageIndex = [0];
 var playerActive = [];
 
-//GENERATE SCORE KEEPER FUNCTION
-// function scoreKeeper(){
-//     var scoreIcon = $('<div>').addClass('score');
-//     var playerIcon;
-//     if (playerActive.length == 1){
-//         // playerActive.find(1);
-//         console.log(true);
-//     }
-    
-// }
-// scoreKeeper();
 var scoreIcon;
 var scoreSpan;
 
@@ -67,10 +56,11 @@ $(document).on("click", ".container button", function(){
     if (playerActive.length == 1){
         $('#h2P').text('waiting for more players...');
     } 
-    if (playerActive.length == 2){
-        $('#h2P').text('almost ready!');
-    } 
-    if (playerActive.length == 3){
+    // if (playerActive.length == 2){
+    // //     $('#h2P').text('almost ready!');
+    // } 
+    if (playerActive.length == 2 && playerCount == 2){
+        // if (playerActive.length == 3){
         $('#h2P').text('all set! get ready!');
         seconds = 11;
         clearInterval(timer);
@@ -79,17 +69,6 @@ $(document).on("click", ".container button", function(){
     
 })
 
-
-// Waiting the other players message
-// $("#submit").on("click", function(){
-//   var waiting = $("<p>");
-//   waiting.text("WAITING THE OTHER PLAYERS :) ");
-//   waiting.attr("class", "mx-auto m-5 text-center");
-
-//   $("#memeCaption").remove();
-//   $(".container").append(waiting); 
-
-// });
 
 function createForm(){
     var formDiv = $('<form>').addClass('formDiv');
@@ -123,10 +102,6 @@ function setTimer(){
             $('#mainImg').empty();
             $('#title').empty();
             $('#h2P').empty();
-        // var makeButton = $('<button>').text('meme').attr('id','start');
-        //     $('.container').append(makeButton);
-        // var voteButton = $('<button>').text('vote').attr('id','vote');
-        //     $('.container').append(voteButton);
             findMeme();
             createForm();
         }
@@ -297,15 +272,6 @@ $(document).on('click', '#submit', function(){
 })
 
 
-// function pageReader(){
-//     if (topTwoA.length === 2){
-//         console.log(true);
-//         // voteRound();
-//     };
-// }
-// pageReader();
-
-
 //Firebase Code
 
 var config = {
@@ -337,18 +303,11 @@ database.ref().set({
     playerCount: playerCounter
 })
 
-// database.ref('/players').on("value", function(snapshot) {
-//     player = snapshot.val().value;
-//     console.log(snapshot.val());
-    
-//   });
-
 //AUTHENTICATION
 firebase.auth().signInAnonymously().catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
-    // ...
 });
 
 firebase.auth().onAuthStateChanged(function(user) {
@@ -357,19 +316,12 @@ firebase.auth().onAuthStateChanged(function(user) {
         var isAnonymous = user.isAnonymous;
         uid = user.uid;
         console.log(user.uid);
-        // ...
     } else {
         // User is signed out.
-        // ...
     }
-    // ...
 });
 
 var user = firebase.auth().currentUser;
-//user.updateProfile({
-//  points: 2;
-//})
-//
 
 $(document).on('click', '.btn', function(event) {
     event.preventDefault();
@@ -380,23 +332,52 @@ $(document).on('click', '.btn', function(event) {
         points: 0,
     });
     playerInfo = database.ref('players').child('player');
-    // console.log(playerInfo[0]);
     database.ref().update({playerCount: playerCounter});
+    // database.ref().update({playerCount: playerActive});
     if(select.attr('id') == '1') alert('hi player 1');
     if(select.attr('id') == '2') alert('hi player 2');
     if(select.attr('id') == '3') alert('hi player 3');
     if(select.attr('id') == '4') alert('hi player 4');
     console.log(playerCounter);
+
     console.log(select);
 })
 
-database.ref("players").on("child_added", function(snapshot) {
-    playerCounter++;;
+//Connections
+
+var connectionsRef = database.ref("/connections");
+
+// '.info/connected' is a special location provided by Firebase that is updated every time
+// the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+
+// When the client's connection state changes...
+connectedRef.on("value", function(snap) {
+
+  // If they are connected..
+  if (snap.val()) {
+
+    // Add user to the connections list.
+    var con = connectionsRef.push(true);
+
+    // Remove user from the connection list when they disconnect.
+    con.onDisconnect().remove();
+  }
 });
 
-// $(document).on('click', '#vote', function() {
-//     database.ref().update({submits: topTwoA.length});
-// })
+// When first loaded or when the connections list changes...
+connectionsRef.on("value", function(snap) {
+
+  // Display the viewer count in the html.
+  // The number of online users is the number of children in the connections list.
+  $("#watchers").text(snap.numChildren());
+});
+
+
+database.ref("players").on("child_added", function(snapshot) {
+    playerCounter++;
+});
 
 database.ref('submits').on("value", function(snap) {
     console.log('submitted');
@@ -404,4 +385,3 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
-//

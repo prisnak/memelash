@@ -1,39 +1,87 @@
-//EC
+//new branch 2018-07-16
+console.log('new branch "ju-20180716-integrated"');
 var votesA = 0;
 var votesB = 0;
 var playerInfo;
-var uid;
 var submitNum = 0;
-//
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
-var makeButton = $('<button>').text('meme').attr('id','start');
-    $('.buttonContainer').append(makeButton);
-var voteButton = $('<button>').text('vote').attr('id','vote');
-    $('.buttonContainer').append(voteButton);
-var resultButton = $('<button>').text('result').attr('id','result');
-    $('.buttonContainer').append(resultButton);
 var rn = '';
 var docP = '';
 // this stores user's input
 var userInput = [];
-var seconds = 61;
+var seconds;
 var timer;
 // this empty array will hold all of the player's answers. 
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
+var pageIndex = [0];
+var playerActive = [];
 
-var formDiv = $('<form>').addClass('formDiv');
-var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
-var submitButton = $('<input>').attr('type', 'submit').attr('value','submit').attr('id','submit');
-    formDiv.append(textField).append(submitButton);
-            $('.inputContainer').append(formDiv);
+var scoreIcon;
+var scoreSpan;
+
+//the vote that was checked
+var q;
+
+
+//START SCREEN.
+$(document).on("click", ".container button", function(){
+    var player = parseInt($(this).attr("id"));
+     scoreIcon = $('<div>').addClass('score');
+     scoreSpan = $('<span>').attr('id','counter').text(0);
+        scoreIcon.append(scoreSpan);
+
+    if (player == 1){
+      $("#check1").removeClass("hidden");
+        playerActive.push(player);
+        scoreIcon.attr('id','player1');
+        $('.scoreDiv').append(scoreIcon);
+
+    } else if(player == 2){
+      $("#check2").removeClass("hidden");
+        playerActive.push(player);
+        scoreIcon.attr('id','player2');
+        $('.scoreDiv').append(scoreIcon);
+    } else if (player == 3){
+      $("#check3").removeClass("hidden");
+        playerActive.push(player);
+        scoreIcon.attr('id','player3');
+        $('.scoreDiv').append(scoreIcon);
+    } else if (player == 4){
+      $("#check4").removeClass("hidden");
+        playerActive.push(player);
+        scoreIcon.attr('id','player4');
+        $('.scoreDiv').append(scoreIcon);
+    }
+    if (playerActive.length == 1){
+        $('#h2P').text('waiting for more players...');
+        seconds = 11;
+        clearInterval(timer);
+        timer = setInterval(setTimer, 1000);
+    } 
+    // if (playerActive.length == 2){
+    // //     $('#h2P').text('almost ready!');
+    // } 
+    // if (playerActive.length == 2 && playerCount == 2){
+    //     // if (playerActive.length == 3){
+    //     $('#h2P').text('all set! get ready!');
+    //     seconds = 11;
+    //     clearInterval(timer);
+    //     timer = setInterval(setTimer, 1000);
+    // } 
+    
+})
+
 
 function createForm(){
+    var formDiv = $('<form>').addClass('formDiv');
+    var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
+    var submitButton = $('<input>').attr('type', 'submit').attr('value','submit').attr('id','submit');
         $('#text').val("");
         formDiv.append(textField).append(submitButton);
-        $('.inputContainer').append(formDiv);
+        $('.formContainer').html(formDiv);
 }
 
 
@@ -41,20 +89,68 @@ function createForm(){
 // TIMER FUNCTION
 function setTimer(){
     seconds = seconds - 1;
-    var makeTimer = $('<p>').text(`Time Remaining: ${seconds}`);
-    $('.timer').html(makeTimer);
-
-    if (seconds === -1){
-        resetTimer();
+    var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
+    $('#title').html(makeTimer);
+    if (pageIndex == 0){
+        if (seconds == 3){
+            $('#h2P').text('ready?');
+        }
+        if (seconds == 2){
+            $('#h2P').text('set');
+        }
+        if (seconds == 1){
+            $('#h2P').text('meme!');
+        }
+        if(seconds <= 0){
+            console.log('true');
+            $('.container').empty();
+            $('#mainImg').empty();
+            $('#title').empty();
+            $('#h2P').empty();
+            findMeme();
+            createForm();
+        }
     }
+
+    if (pageIndex == 1){
+        if (seconds === 0){
+            voteRound();
+            $('.gameNotifier').empty();
+            
+        }
+    }
+    if (pageIndex == 2){
+        if (seconds === 0){
+            showResults();
+        }
+    }
+    if (pageIndex == 3){
+        if (seconds === 0){
+            findMeme();
+        }
+    }
+
 }
 
 
 //MEME GENERATOR FUNCTION
-
+//will we need to make the response's imgUrl a firebase var so that all users see the same image?
 function findMeme (){
-    formDiv.append(textField).append(submitButton);
-        $('.inputContainer').append(formDiv);
+    pageIndex = [];
+    var page = 1;
+    pageIndex.push(1);
+    userInput = [];
+    topTwoA = [];
+    $('.gameNotifier').empty();
+    $('.messageContainer').empty();
+    $('.voteContainer').empty();
+
+    createForm();
+
+    //timer
+    seconds = 21;
+    clearInterval(timer);
+    timer = setInterval(setTimer, 1000);
 
     //generate random number to pull a random object/image from the 25 memes pulled from the ajax response
     rn = Math.floor(Math.random()* 24) +1;
@@ -84,7 +180,7 @@ function findMeme (){
 
             //variable rn is used here at the image's source  
             var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
-                        
+                
                 imgDiv.append(makeImg);
                 imgDiv.prepend(docP);
                 $('.displayImage').html(imgDiv);
@@ -95,81 +191,68 @@ function findMeme (){
 
 //VOTING FUNCTION
 function voteRound(){
-        seconds = 61;
+    pageIndex = [];
+    var page = 2;
+    pageIndex.push(page);
+        $('.formContainer').empty();
+    var resultButton = $('<button>').text('submit vote').attr('id','result').addClass('submit-vote');
+        seconds = 11;
         clearInterval(timer);
         timer = setInterval(setTimer, 1000);
         docP.remove();
         userInput = [];
     for (c in topTwoA){   
         console.log(topTwoA[c]);
+        var notify = $('h2').text('vote for your favorite caption');
         var a = topTwoA[c];
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
             radioDiv.append(createChoices).append(createLabel);
-            $('.inputContainer').append(radioDiv);
-            // $('.inputContainer').append(createLabel); 
+            $('.gameNotifier').append(notify);
+            $('.voteContainer').append(radioDiv);
+            $('.voteContainer').append(resultButton);
+            
     }
-}
 
-//VOTING ONCLICK FUNCTION
-$('.buttonContainer #result').on('click', function(){
-    showResults();
-})
+
+}
 
 //RESULTS FUNCTION
 function showResults(){
-    var q = $(`input:radio[name='a']:checked`).val();
-    var voted = $('<p>').addClass('#userText');
-        voted.text(topTwoA[q]);
-        $('.inputContainer').prepend(voted);
-        userVote = q;
-        console.log(userVote);
-        //============================================
-        //EC
-        if(userVote == 0) {
-            console.log('first choice');
-            votesA++;
-            database.ref().update({votesA: votesA});
-        }
-        if(userVote == 1) {
-            console.log('second choice');
-            votesB++;
-            database.ref().update({votesB: votesB++});
-        }
-        if(votesA > votesB) {
-            console.log('First option gets two points');
-            database.ref('players')
-        }
-        if(votesB > votesA) {
-            console.log('Second ooption gets two points');
-        }
-        //
-}
-
-
-  
-//onclick that calls to findMeme function. we can change this later to a timed interval so it will pull the random photo for the next round.
-$('.buttonContainer #start').on('click', function(){
-    userInput = [];
-    topTwoA = [];
-    createForm();  
-    seconds = 61;
+    pageIndex = [];
+    var page = 3;
+    pageIndex.push(page);
+    // $('.voteContainer').empty();
+    seconds = 11;
     clearInterval(timer);
-    findMeme();
     timer = setInterval(setTimer, 1000);
-    docP.remove();
-});
-//onclick test for results function
-$('.buttonContainer #vote').on('click', function(){
-    voteRound();
+    userInput = [];
+    var notify = $('h2').text('get ready for the next round');    
+    //value of the vote that was checked (also its position) its either 0 or 1
+    q = $(`input:radio[name='a']:checked`).val();
+    console.log(q);
+    var voted = $('<p>').addClass('#userText');
+    voted.text(`the winner is: ${topTwoA[q]}`);
+        $('.gameNotifier').html(notify);
+        $('.messageContainer').append(voted);
+        // debugger;
+        userVote = q;
+}
+//RESULTS ONCLICK FUNCTION
+$(document).on('click','#result', function(){
+    if (userVote.length == 1){
+        return;
+    }
+    showResults();
+
 })
 
+
 //SUBMIT FUNCTION
-$('form #submit').on('click', function(){
+$(document).on('click', '#submit', function(){
     event.preventDefault();
     var input = $('#text').val();
-    console.log(uid);
     
     if (topTwoA.length >= 2){
         return;
@@ -178,29 +261,24 @@ $('form #submit').on('click', function(){
         return;
     } 
     else if (input != ""){
-        event.preventDefault();
-        
         var b = $('#userText');
         b.text(input);
-        $('.inputContainer').prepend(b);
+        $('.messageContainer').html(b);
         userInput.push(input);
         topTwoA.push(input);
         $('#text').val("");
-        console.log(input);
         database.ref('submits').set({
             uid: uid,
             answer: input
         })
         submitNum++;
         database.ref().update({submitCounter: submitNum});
+        database.ref('players/player-info').update({submits: 1});
+
     }
 
 })
 
-
-
-//==========================================================================
-//EC
 
 //Firebase Code
 
@@ -226,25 +304,18 @@ var playerCounter = 0;
 
 database.ref().set({
     players: JSON.stringify([]),
-    votesA: 0,
-    votesB: 0,
+    votesA: votesA,
+    votesB: votesB,
     submits: JSON.stringify([]),
     submitCounter: submitNum,
     playerCount: playerCounter
 })
-
-// database.ref('/players').on("value", function(snapshot) {
-//     player = snapshot.val().value;
-//     console.log(snapshot.val());
-    
-//   });
 
 //AUTHENTICATION
 firebase.auth().signInAnonymously().catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
-    // ...
 });
 
 firebase.auth().onAuthStateChanged(function(user) {
@@ -253,51 +324,97 @@ firebase.auth().onAuthStateChanged(function(user) {
         var isAnonymous = user.isAnonymous;
         uid = user.uid;
         console.log(user.uid);
-        // ...
     } else {
         // User is signed out.
-        // ...
     }
-    // ...
 });
 
 var user = firebase.auth().currentUser;
-//user.updateProfile({
-//  points: 2;
-//})
-//
 
 $(document).on('click', '.btn', function(event) {
     event.preventDefault();
     var select = $(this);
     var selectArray = [select];
-    database.ref('players').child(uid).set({
-        player: select.attr('id'),
+    var playerID = select.attr('id');
+    // database.ref('players').child(uid).set({
+    //     player: playerID,
+    //     points: 0,
+    // });
+    database.ref('players').child('player-info').set({
+        uid: uid,
+        player: playerID,
         points: 0,
+        submits: 0
     });
     playerInfo = database.ref('players').child('player');
-    // console.log(playerInfo[0]);
     database.ref().update({playerCount: playerCounter});
+    database.ref('players/player-info').update({
+        uid: uid,
+        player: playerID,
+        points: 0,
+        submits: 0
+    })
     if(select.attr('id') == '1') alert('hi player 1');
     if(select.attr('id') == '2') alert('hi player 2');
     if(select.attr('id') == '3') alert('hi player 3');
     if(select.attr('id') == '4') alert('hi player 4');
     console.log(playerCounter);
+
     console.log(select);
 })
 
-database.ref("players").on("child_added", function(snapshot) {
-    playerCounter++;;
+//Connections
+
+var connectionsRef = database.ref("/connections");
+
+// '.info/connected' is a special location provided by Firebase that is updated every time
+// the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+
+// When the client's connection state changes...
+connectedRef.on("value", function(snap) {
+
+  // If they are connected..
+  if (snap.val()) {
+
+    // Add user to the connections list.
+    var con = connectionsRef.push(true);
+
+    // Remove user from the connection list when they disconnect.
+    con.onDisconnect().remove();
+  }
 });
 
-// $(document).on('click', '#vote', function() {
-//     database.ref().update({submits: topTwoA.length});
-// })
+// When first loaded or when the connections list changes...
+connectionsRef.on("value", function(snap) {
+
+  // Display the viewer count in the html.
+  // The number of online users is the number of children in the connections list.
+  $("#watchers").text(snap.numChildren());
+});
+
+
+database.ref("players").on("child_added", function(snapshot) {
+    playerCounter++;
+});
 
 database.ref('submits').on("value", function(snap) {
+    snap.val();
+    console.log(snap.val());
     console.log('submitted');
   });
-database.ref('votesA').on("value", function(snap) {
-    console.log('votes');
-});
-//
+
+$(document).on('click', '.submit-vote', function () {
+    event.preventDefault();
+    var voteVal = $(`input:radio[name='a']:checked`).val();
+    if(voteVal == 0) {
+        votesA ++;
+        database.ref().update({votesA: votesA});
+    }
+    if(voteVal == 1) {
+        votesB ++;
+        database.ref().update({votesB: votesB});
+    }
+})
+
