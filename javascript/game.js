@@ -78,10 +78,9 @@ function createForm(){
         formDiv.append(textField).append(submitButton);
         $('.formContainer').html(formDiv);
 }
-
+//this checks when the topTwoA array's max two inputs are added. once max is reached, voteRound starts. So players do not have to wait for timer to reach 0
 function pageReader(){
     if (topTwoA.length == 2){
-
         console.log(true);
         voteRound();
     }else(console.log(false));
@@ -110,16 +109,13 @@ function setTimer(){
             $('#mainImg').empty();
             $('#title').empty();
             $('#h2P').empty();
-        // var makeButton = $('<button>').text('meme').attr('id','start');
-        //     $('.container').append(makeButton);
-        // var voteButton = $('<button>').text('vote').attr('id','vote');
-        //     $('.container').append(voteButton);
             findMeme();
             createForm();
         }
     }
 
     if (pageIndex == 1){
+        //pageReader is only used in pageIndex 1 (input round) local if else statements caused bugs so its own function worked fine. it will check every second
         pageReader();
         if (seconds === 0){
             voteRound();
