@@ -1,4 +1,4 @@
-//new branch 2018-07-16
+//new branch 2018-07-19
 console.log('new branch "ju-20180716-integrated"');
 var votesA = 0;
 var votesB = 0;
@@ -26,7 +26,7 @@ var scoreIcon;
 //change winningScore to 10 once firebase is ready
 var winningScore = 3;
 //for now only will work for player 1.
-var oppScore;
+var oppScore = 3;
 var myScore;
 
 function pageReader(){
@@ -147,8 +147,13 @@ function setTimer(){
         }
     }
     if (pageIndex == 3){
+        if (seconds === 5){
+            finalResults();
+        }
         if (seconds === 0){
             findMeme();
+
+            
             
         }
     }
@@ -287,9 +292,10 @@ $(document).on('click','#result', function(){
     showResults();
 
 })
+// https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif
 //test button for final results
-var testButton = $('<button>').text('test final');
-$('.test').append(testButton);
+// var testButton = $('<button>').text('test final');
+// $('.test').append(testButton);
 //FINAL RESULTS FUNCTION 
 function finalResults(){
     if (myScore == winningScore || oppScore == winningScore){
@@ -300,15 +306,23 @@ function finalResults(){
         console.log('score reached');
         $('.timer').empty();
         $('.messageContainer').empty();
-        $('.displayImage').empty();
+        // $('.displayImage').empty();
         $('.gameNotifier').empty();
         $('.voteContainer').empty();
+        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
+        $('.displayImage').html(makeImg);
+        if(myScore == winningScore){
+            $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
+        }
+        if(oppScore == winningScore){
+            $('.messageContainer').html('player 2 wins!');
+        }
 
     }else{console.log('score not reached')};
 }
-$(document).on('click', '.test button', function(){
-    finalResults();
-})
+// $(document).on('click', '.test button', function(){
+//     finalResults();
+// })
 
 
 //SUBMIT FUNCTION
@@ -416,10 +430,10 @@ $(document).on('click', '.btn', function(event) {
     playerInfo = database.ref('players').child('player');
     // console.log(playerInfo[0]);
     database.ref().update({playerCount: playerCounter});
-    if(select.attr('id') == '1') alert('hi player 1');
-    if(select.attr('id') == '2') alert('hi player 2');
-    if(select.attr('id') == '3') alert('hi player 3');
-    if(select.attr('id') == '4') alert('hi player 4');
+    if(select.attr('id') == '1');
+    if(select.attr('id') == '2');
+    if(select.attr('id') == '3');
+    if(select.attr('id') == '4');
     console.log(playerCounter);
     console.log(select);
 })
