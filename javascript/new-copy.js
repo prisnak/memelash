@@ -169,11 +169,12 @@ function voteRound(){
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
-            radioDiv.append(createChoices).append(createLabel);
-            $('.gameNotifier').append(notify);
-            $('.voteContainer').append(radioDiv);
-            $('.voteContainer').append(resultButton);        
+        radioDiv.append(createChoices).append(createLabel);
+        $('.gameNotifier').append(notify);
+        $('.voteContainer').append(radioDiv);
+        $('.voteContainer').append(resultButton);        
     }
+
 }
 //==============================================
 //RESULTS FUNCTION
@@ -193,10 +194,17 @@ function showResults(){
     console.log(q);
     var voted = $('<p>').addClass('#userText');
     voted.text(`the winner is: ${topTwoA[q]}`);
-        $('.gameNotifier').html(notify);
-        $('.messageContainer').append(voted);
-        // debugger;
-        userVote = q;
+    $('.gameNotifier').html(notify);
+    $('.messageContainer').append(voted);
+    debugger;
+    userVote = q;
+    database.ref().on("value", function(snapshot) {
+        if(votesA > votesB) database.ref('players/player-info').update({
+                points: 2,
+            })
+       
+    })
+    
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
@@ -204,6 +212,12 @@ $(document).on('click','#result', function(){
     //     return;
     // }
     showResults();
+    // database.ref().on("value", function(snapshot) {
+    //     database.ref().update({
+    //         votesA: 0,
+    //         votesB: 0
+    //     })
+    // })
 })
 
 //Firebase Code
@@ -266,113 +280,127 @@ var checkSrc1 = $('#check1').attr('src');
 var checkSrc2 = $('#check2').attr('src');
 var checkSrc3 = $('#check3').attr('src');
 var checkSrc4 = $('#check4').attr('src');
-
+checkSrc1 = '';
+checkSrc2 = '';
+checkSrc3 = '';
+checkSrc4 = '';
 //No longer need hidden value
 
 $(document).ready(function() {
     //keeps checks hidden on load
-    checkSrc1 = '';
-    checkSrc2 = '';
-    checkSrc3 = '';
-    checkSrc4 = '';
+
     $('#check1').attr('src', checkSrc1);
     $('#check2').attr('src', checkSrc2);
     $('#check3').attr('src', checkSrc3);
     $('#check4').attr('src', checkSrc4);
 
 })
+database.ref('/game').on('value', function (snap) {
+    if(snap.child('player1C') == 'images/checked.png') {
+        console.log('here');
+        checkSrc1 = snap.val().player1C; 
+        checkImg1 = $("#check1").attr('src', checkSrc1);
+        console.log(snap.val().player1C);   
+        $('#check1').html(checkImg1);
+        $('#check1').attr('src', snap.val().player1C);
+        scoreIcon.attr('id','player1');
+        $('.scoreDiv').append(scoreIcon);
+    }
 
-$(document).on('click', '.container button', function(event) {
-    event.preventDefault();
-    var player = parseInt($(this).attr("id"));
-    scoreIcon = $('<div>').addClass('score');
-    scoreSpan = $('<span>').attr('id','counter').text(0);
-    scoreIcon.append(scoreSpan);
-    database.ref('players').child('player-info').set({
-        uid: uid,
-        player: player,
-        points: 0,
-        submits: 0
-    });
-    playerInfo = database.ref('players').child('player');
-    database.ref().update({playerCount: playerCounter});
-    database.ref('players/player-info').update({
-        uid: uid,
-        player: player,
-        points: 0,
-        submits: 0
-    })
 
-    database.ref('/game').on('value', function (snap) {
-        if(snap.child('player1C').exists()) {
-            console.log('here');
-            checkImg1 = $("#check1").attr('src', checkSrc1);
-                console.log(snap.val().player1C);   
-                $('#check1').html(checkImg1);
-                scoreIcon.attr('id','player1');
-                $('.scoreDiv').append(scoreIcon);
-        }
-        if (player == 1 ){
-            playerActive.push(player);
-            checkSrc1 = 'images/checked.png';
-            database.ref('game').update({player1C: checkSrc1});
-            // database.ref('/game').on('value', function (snap) {
+    $(document).on('click', '.container button', function(event) {
+        event.preventDefault();
+        var player = parseInt($(this).attr("id"));
+        scoreIcon = $('<div>').addClass('score');
+        scoreSpan = $('<span>').attr('id','counter').text(0);
+        scoreIcon.append(scoreSpan);
+        database.ref('players').child('player-info').set({
+            uid: uid,
+            player: player,
+            points: 0,
+            submits: 0
+        });
+        playerInfo = database.ref('players').child('player');
+        database.ref().update({playerCount: playerCounter});
+        database.ref('players/player-info').update({
+            uid: uid,
+            player: player,
+            points: 0,
+            submits: 0
+        })
+
+        // database.ref('/game').on('value', function (snap) {
+        //     if(snap.child('player1C') == 'images/checked.png') {
+        //         console.log('here');
+        //         checkImg1 = $("#check1").attr('src', checkSrc1);
+        //             console.log(snap.val().player1C);   
+        //             $('#check1').html(checkImg1);
+        //             scoreIcon.attr('id','player1');
+        //             $('.scoreDiv').append(scoreIcon);
+        //     }
+        //     })
+            if (player == 1){
+                playerActive.push(player);
+                checkSrc1 = 'images/checked.png';
+                database.ref('game').update({player1C: checkSrc1});
                 checkSrc1 = snap.val().player1C; 
                 checkImg1 = $("#check1").attr('src', checkSrc1);
                 console.log(snap.val().player1C);   
-                $('#check1').html(checkImg1);
+                // $('#check1').html(checkImg1);
+                $('#check1').attr('src', snap.val().player1C);
                 scoreIcon.attr('id','player1');
                 $('.scoreDiv').append(scoreIcon);
-            // })    
-        } 
+                // })    
+            } 
+            if (player == 2){
+                    playerActive.push(player);
+                    checkSrc2 = 'images/checked.png';
+                    database.ref('game').update({player2C: checkSrc2});
+                    checkSrc2 = snap.val().player2C; 
+                    var checkImg = $("#check2").attr('src', snap.val().player2C);
+                    console.log(snap.val().player2C);   
+                    console.log(checkSrc2);
+                    $('#check2').html(checkImg);
+                    scoreIcon.attr('id','player2');
+                    $('.scoreDiv').append(scoreIcon);
+                } 
+                if (player == 3){
+                    playerActive.push(player);
+                    checkSrc3 = 'images/checked.png';
+                    database.ref('game').update({player3C: checkSrc3});
+                    checkSrc3 = snap.val().player3C; 
+                    var checkImg = $("#check3").attr('src', snap.val().player3C);
+                    console.log(snap.val().player3C);   
+                    console.log(checkSrc3);
+                    $('#check3').html(checkImg);
+                    scoreIcon.attr('id','player3');
+                    $('.scoreDiv').append(scoreIcon);
+                } 
+                if (player == 4){
+                    playerActive.push(player);
+                    checkSrc4 = 'images/checked.png';
+                    database.ref('game').update({player4C: checkSrc4});
+                    checkSrc4 = snap.val().player4C; 
+                    var checkImg = $("#check4").attr('src', snap.val().player4C);
+                    console.log(snap.val().player4C);   
+                    console.log(checkSrc4);
+                    $('#check4').html(checkImg);
+                    scoreIcon.attr('id','player4');
+                    $('.scoreDiv').append(scoreIcon);
+                }
+                if (playerActive.length == 1){
+                    $('#h2P').text('waiting for more players...');
+                    seconds = 11;
+                    clearInterval(timer);
+                    timer = setInterval(setTimer, 1000);
+                }
+                console.log(playerCounter);
+                console.log(player);
+            })
     })
 
 
-    if (player == 2){
-        playerActive.push(player);
-        checkSrc2 = 'images/checked.png';
-        database.ref('game').update({player2C: checkSrc2});
-        checkSrc2 = snap.val().playerC; 
-        var checkImg = $("#check2").attr('src', snap.val().player2C);
-        console.log(snap.val().player2C);   
-        console.log(checkSrc2);
-        $('#check2').html(checkImg);
-        scoreIcon.attr('id','player2');
-        $('.scoreDiv').append(scoreIcon);
-    } 
-    if (player == 3){
-        playerActive.push(player);
-        checkSrc3 = 'images/checked.png';
-        database.ref('game').update({player3C: checkSrc3});
-        checkSrc3 = snap.val().playerC; 
-        var checkImg = $("#check3").attr('src', snap.val().player3C);
-        console.log(snap.val().player3C);   
-        console.log(checkSrc3);
-        $('#check3').html(checkImg);
-        scoreIcon.attr('id','player3');
-        $('.scoreDiv').append(scoreIcon);
-    } 
-    if (player == 4){
-        playerActive.push(player);
-        checkSrc4 = 'images/checked.png';
-        database.ref('game').update({player4C: checkSrc4});
-        checkSrc4 = snap.val().playerC; 
-        var checkImg = $("#check4").attr('src', snap.val().player4C);
-        console.log(snap.val().player4C);   
-        console.log(checkSrc4);
-        $('#check4').html(checkImg);
-        scoreIcon.attr('id','player4');
-        $('.scoreDiv').append(scoreIcon);
-    }
-    if (playerActive.length == 1){
-        $('#h2P').text('waiting for more players...');
-        seconds = 11;
-        clearInterval(timer);
-        timer = setInterval(setTimer, 1000);
-    }
-    console.log(playerCounter);
-    console.log(player);
-})
+   
 
 //ADDING THEM TO THE PLAYER COUNTER
 database.ref("players").on("child_added", function(snapshot) {
@@ -424,7 +452,7 @@ $(document).on('click', '#submit', function(){
         })
         submitNum++;
         database.ref().update({submitCounter: submitNum});
-        database.ref('players/player-info').update({submits: 1});
+        database.ref('players/player-info').update({submits: submitNum});
     }
 });
 
@@ -447,4 +475,5 @@ $(document).on('click', '.submit-vote', function () {
         votesB ++;
         database.ref().update({votesB: votesB});
     }
+    if(votesA > votesB) console.log('more votes to a')
 });
