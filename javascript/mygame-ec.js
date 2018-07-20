@@ -1,9 +1,3 @@
-//new branch 2018-07-16
-console.log('new branch "ju-20180716-integrated"');
-var votesA = 0;
-var votesB = 0;
-var playerInfo;
-var submitNum = 0;
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
 var rn = '';
@@ -250,6 +244,8 @@ $(document).on('click','#result', function(){
 
 
 //SUBMIT FUNCTION
+
+var submitNum = 0;
 $(document).on('click', '#submit', function(){
     event.preventDefault();
     var input = $('#text').val();
@@ -298,6 +294,9 @@ var database = firebase.database();
 var player = 0;
 var players = database.ref('players');
 var playerCounter = 0;
+var votesA = 0;
+var votesB = 0;
+var playerInfo;
 // playerCounter = database.ref('playerCount').on("value", function (snap) {
 //     return snap.val();
 // });
@@ -366,34 +365,22 @@ $(document).on('click', '.btn', function(event) {
 //Connections
 
 var connectionsRef = database.ref("/connections");
-
-// '.info/connected' is a special location provided by Firebase that is updated every time
-// the client's connection state changes.
-// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
 var connectedRef = database.ref(".info/connected");
 
-// When the client's connection state changes...
 connectedRef.on("value", function(snap) {
-
   // If they are connected..
   if (snap.val()) {
-
     // Add user to the connections list.
     var con = connectionsRef.push(true);
-
     // Remove user from the connection list when they disconnect.
     con.onDisconnect().remove();
   }
 });
 
-// When first loaded or when the connections list changes...
 connectionsRef.on("value", function(snap) {
-
-  // Display the viewer count in the html.
   // The number of online users is the number of children in the connections list.
   $("#watchers").text(snap.numChildren());
 });
-
 
 database.ref("players").on("child_added", function(snapshot) {
     playerCounter++;
