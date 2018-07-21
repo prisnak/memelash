@@ -10,7 +10,7 @@ body{
 }
 
 /*font*/
-*{
+*, #h2P{
 	font-family: 'Reem Kufi', sans-serif;
 	text-transform: lowercase;
 }
@@ -23,6 +23,12 @@ body{
 /*hiding checked image*/
 .hidden{
 	display: none;
+}
+
+/*score div position*/
+.scoreDiv{
+	align-items: center;
+	justify-content: center;
 }
 
 /*close button*/
