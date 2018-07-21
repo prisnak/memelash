@@ -292,10 +292,7 @@ $(document).on('click','#result', function(){
     showResults();
 
 })
-// https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif
-//test button for final results
-// var testButton = $('<button>').text('test final');
-// $('.test').append(testButton);
+
 //FINAL RESULTS FUNCTION 
 function finalResults(){
     if (myScore == winningScore || oppScore == winningScore){
@@ -315,14 +312,12 @@ function finalResults(){
             $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
         }
         if(oppScore == winningScore){
-            $('.messageContainer').html('player 2 wins!');
+            $('.messageContainer').html(`<h3>player 2 wins!</h3>`);
         }
 
     }else{console.log('score not reached')};
 }
-// $(document).on('click', '.test button', function(){
-//     finalResults();
-// })
+
 
 
 //SUBMIT FUNCTION
