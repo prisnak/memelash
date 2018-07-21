@@ -1,17 +1,25 @@
+<<<<<<< ec-firebase-7/14
 
 /*hiding checked image*/
 /* .hidden{
 	display: none;
 } */
 
+=======
+body{
+	text-align: center;
+	margin: auto;
+	background-color: ghostwhite;
+}
+>>>>>>> master
 /*font*/
 *{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	text-transform: lowercase;
 }
-body{
-	/*margin: auto;*/
-	text-align: center;
+/*hiding checked image*/
+.hidden{
+	display: none;
 }
 
 /*close button*/
@@ -24,60 +32,44 @@ body{
 	width: 370px;
 }
 
-/*placeholder to the meme image*/
-/* .memeImage, .memeSubmit{
-	background-color: red;
-	height: 250px;
-	width: 370px;
-} */
-
 .image img{
 	height: 264px;
 	width: 370px;
-	text-align: center;
 }
 
 #displayImage {
-	margin: auto;
 	height: 50%;
 	width: 50%;
-	text-align: center;
 }
 .scoreDiv {
 	width: 370px;
 	height: 75px;
-	/* can remove background color later. just for ref */
-	/* background-color: silver; */
-	/*padding: 30px;*/
-	text-align: center;
 }
 
 .score {
-	text-align: center; 
+	/* text-align: center; 
 	float: left;
-    size: 7ex;
-    bottom: 8px;
-    right: 8px;
 	color: ghostwhite;
     border-radius: 50%;
     height: 30px;
-    width: 30px;
-    padding: 3px;
+    width: 30px; */
+    padding: 24px;
 }
-#player1 { 
-	height: 100%; 
-	width: 70px;
-}
-#player2 { 
-	height: 100%; 
-	width: 70px;
-}
-#player3 { 
-	height: 100%;
-	width: 70px; 
-}
-#player4 { 
+#player1, #player2, #player3, #player4 { 
 	height: 100%; 
 	width: 70px;
 }
 
+/* ju-added css to text color for some notifiers */
+#warning {
+	color: red;
+}
+#notifier {
+	color: orangered;
+	text-decoration: underline;
+}
+#submit, #result {
+	color:ghostwhite;
+	background-color: slateblue;
+	border: none;
+}
