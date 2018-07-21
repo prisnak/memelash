@@ -23,12 +23,17 @@ var queryURL;
 
 
 //==================================================================
+function pageReader(){
+    if (topTwoA.length == 2){
+        voteRound();
+    }else(console.log(false));
+}
 // TIMER FUNCTION
 function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
     $('#title').html(makeTimer);
-    timerDatabase();
+    database.ref('game').update({timer: seconds});
 
     if (pageIndex == 0){
         if (seconds == 3){
@@ -52,6 +57,7 @@ function setTimer(){
     }
 
     if (pageIndex == 1){
+        pageReader();                
         if (seconds === 0){
             voteRound();
             $('.gameNotifier').empty();  
@@ -63,22 +69,22 @@ function setTimer(){
         }
     }
     if (pageIndex == 3){
+        if (seconds === 5){
+            finalResults();
+        }
         if (seconds === 0){
             findMeme();
         }
     }
-
-}
-
-function timerDatabase () {
-    database.ref('game').update({timer: seconds});
-    database.ref("/game").on("value", function(snapshot) {
-        // Print the local data to the console.
-        seconds = snapshot.val().timer;
-        console.log('snapshot ' + snapshot.val().timer);
+    if (seconds <= 5){
+        $('.timer').attr('id','warning');
+    }else{
+        $('.timer').attr('id','');
         
-    });
+    }
+
 }
+
 //=================================================================
 //Submit Caption Form
 function createForm(){
@@ -99,15 +105,15 @@ function findMeme (){
     pageIndex.push(1);
     userInput = [];
     topTwoA = [];
-    $('.gameNotifier').empty();
     $('.messageContainer').empty();
     $('.voteContainer').empty();
+    var notify = $('<h4>').text('caption this image!').attr('id','notifier');
+    $('.gameNotifier').html(notify);
     createForm();
     //timer
     seconds = 21;
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
-    timerDatabase();
 
     //generate random number to pull a random object/image from the 25 memes pulled from the ajax response
     rn = Math.floor(Math.random()* 24) +1;
@@ -151,7 +157,6 @@ function findMeme (){
 //==================================================================
 //VOTING FUNCTION
 function voteRound(){
-    timerDatabase();
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
@@ -179,12 +184,10 @@ function voteRound(){
 //==============================================
 //RESULTS FUNCTION
 function showResults(){
-    timerDatabase();
     pageIndex = [];
     var page = 3;
     pageIndex.push(page);
-    // $('.voteContainer').empty();
-    seconds = 11;
+    seconds = 6;
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
     userInput = [];
@@ -208,9 +211,9 @@ function showResults(){
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
-    // if (userVote.length == 1){
-    //     return;
-    // }
+    if (userVote.length == 1){
+        return;
+    }
     showResults();
     // database.ref().on("value", function(snapshot) {
     //     database.ref().update({
@@ -219,6 +222,30 @@ $(document).on('click','#result', function(){
     //     })
     // })
 })
+
+function finalResults(){
+    if (myScore == winningScore || oppScore == winningScore){
+        pageIndex = [];
+        var page = 4;
+        pageIndex.push(page);
+        clearInterval(timer);
+        console.log('score reached');
+        $('.timer').empty();
+        $('.messageContainer').empty();
+        // $('.displayImage').empty();
+        $('.gameNotifier').empty();
+        $('.voteContainer').empty();
+        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
+        $('.displayImage').html(makeImg);
+        if(myScore == winningScore){
+            $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
+        }
+        if(oppScore == winningScore){
+            $('.messageContainer').html('player 2 wins!');
+        }
+
+    }else{console.log('score not reached')};
+}
 
 //Firebase Code
 
@@ -237,7 +264,7 @@ var database = firebase.database();
 
 var player;
 var players = database.ref('players');
-var playerCounter = 0;
+var playerCounter = playerActive.length;
 var votesA = 0;
 var votesB = 0;
 var playerInfo;
@@ -390,6 +417,12 @@ database.ref('/game').on('value', function (snap) {
                 }
                 if (playerActive.length == 1){
                     $('#h2P').text('waiting for more players...');
+                } 
+                if (playerActive.length == 2){
+                    $('#h2P').text('almost ready!');
+                } 
+                if (playerActive.length == 3){
+                    $('#h2P').text('all set! get ready!');
                     seconds = 11;
                     clearInterval(timer);
                     timer = setInterval(setTimer, 1000);

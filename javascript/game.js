@@ -25,12 +25,16 @@ var scoreIcon;
 // var scoreSpan;
 //change winningScore to 10 once firebase is ready
 var winningScore = 3;
-//for now only will work for player 1.
-var oppScore = 3;
-var myScore;
+//for demo purpose. four players on one computer
+var p1Score;
+var p2Score;
+var p3Score;
+var p4Score;
+
 
 function pageReader(){
-        if (topTwoA.length == 2){
+    //changed to for demo purposes
+        if (topTwoA.length == 4){
             voteRound();
         }else(console.log(false));
     }
@@ -49,7 +53,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden");
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        myScore = parseInt($('#player1').text());        
+        p1Score = parseInt($('#player1').text());        
         $(this).remove();
     } else if(player == 2){
       $("#check2").removeClass("hidden");
@@ -59,7 +63,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        oppScore = parseInt($('#player2').text());
+        p2Score = parseInt($('#player2').text());
         $(this).remove();
     } else if (player == 3){
       $("#check3").removeClass("hidden");
@@ -69,6 +73,7 @@ $(document).on("click", ".container button", function(){
         scoreIcon.addClass('m-2 rounded-circle bg-primary text-center text-white numberVote')
         //ju        
         $('.scoreDiv').append(scoreIcon);
+        p3Score = parseInt($('#player3').text());        
         $(this).remove();        
     } else if (player == 4){
       $("#check4").removeClass("hidden");
@@ -78,6 +83,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden")
         //ju        
         $('.scoreDiv').append(scoreIcon);
+        p4Score = parseInt($('#player4').text());        
         $(this).remove();
         
     }
@@ -318,14 +324,11 @@ $(document).on('click','#voteSubmit', function(){
     if (userVote.length == 1){
         return;
     }
-    debugger;
+    // debugger;
     showResults();
 
 })
-// https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif
-//test button for final results
-// var testButton = $('<button>').text('test final');
-// $('.test').append(testButton);
+
 //FINAL RESULTS FUNCTION 
 function finalResults(){
     if (myScore == winningScore || oppScore == winningScore){
@@ -350,10 +353,6 @@ function finalResults(){
 
     }else{console.log('score not reached')};
 }
-// $(document).on('click', '.test button', function(){
-//     finalResults();
-// })
-
 
 
 
