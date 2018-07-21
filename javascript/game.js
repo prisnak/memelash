@@ -235,14 +235,15 @@ function voteRound(){
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
-        $('.formContainer').empty();
+    $('.formContainer').empty();
     var resultButton = $('<button>').text('submit vote').attr('id','result');
 //timer
-        seconds = 11;
-        clearInterval(timer);
-        timer = setInterval(setTimer, 1000);
-        docP.remove();
-        userInput = [];
+    seconds = 11;
+    clearInterval(timer);
+    timer = setInterval(setTimer, 1000);
+    docP.remove();
+    userInput = [];
+
     for (c in topTwoA){   
         console.log(topTwoA[c]);
         var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');
@@ -253,11 +254,8 @@ function voteRound(){
             radioDiv.append(createChoices).append(createLabel);
             $('.gameNotifier').html(notify);
             $('.voteContainer').append(radioDiv);
-            $('.voteContainer').append(resultButton);
-            
+            $('.voteContainer').append(resultButton);            
     }
-
-
 }
 
 //RESULTS FUNCTION
