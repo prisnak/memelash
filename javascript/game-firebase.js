@@ -492,8 +492,6 @@ function finalResults(){
         } else {console.log('score not reached');}
     }
     if(votesA > votesB) {
-        votesA = 0;
-        votesB = 0;
         database.ref('/players/player-info').update({points: 2});
         //, function(){
         //     database.ref().update({
@@ -503,14 +501,12 @@ function finalResults(){
         // });
 
         database.ref().update({
-            votesA: votesA,
-            votesB: votesB
+            votesA: 0,
+            votesB: 0
         })
 
     }
     if(votesB > votesA) {
-        votesA = 0;
-        votesB = 0;
         database.ref('players/player-info').update({points: 2});
     //         , function(){
     //         database.ref().update({
@@ -519,8 +515,8 @@ function finalResults(){
     //         })
     // }
         database.ref().update({
-            votesA: votesA,
-            votesB: votesB
+            votesA: 0,
+            votesB: 0
         })
 
 
