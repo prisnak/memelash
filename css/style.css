@@ -43,8 +43,9 @@ body{
 	/*height: 264px;*/
 	width: 90%;
 	text-align: center;
+}
 
-#displayImage{
+#displayImage {
 	height: 50%;
 	width: 50%;
 }
