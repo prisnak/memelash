@@ -65,7 +65,7 @@ function setTimer(){
 //=================================================================
 //Submit Caption Form
 function createForm(){
-    var formDiv = $('<form>').addClass('formDiv');
+    var formDiv = $('<form>').addClass('formDiv text-center m-3');
     var textField = $('<input>').attr('type','text').attr('placeholder','your caption').attr('id','text');
     var submitButton = $('<input>').attr('type', 'submit').attr('value','submit').attr('id','submit');
     $('#text').val("");

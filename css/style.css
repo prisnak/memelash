@@ -1,7 +1,8 @@
+
 /*hiding checked image*/
-/* .hidden{
+ .hidden{
 	display: none;
-} */
+} 
 
 body{
 	text-align: center;
@@ -11,7 +12,7 @@ body{
 
 /*font*/
 *{
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-family: 'Reem Kufi', sans-serif;
 	text-transform: lowercase;
 }
 /*hiding checked image*/
@@ -29,12 +30,21 @@ body{
 	width: 370px;
 }
 
-.image img{
-	height: 264px;
-	width: 370px;
+#scoreContainer{
+	width: 400px;
 }
 
-#displayImage {
+/*HP sentence*/
+#h2P, #text {
+	font-family: 'Reem Kufi', sans-serif;
+}
+
+.image img{
+	/*height: 264px;*/
+	width: 90%;
+	text-align: center;
+
+#displayImage{
 	height: 50%;
 	width: 50%;
 }
@@ -52,9 +62,55 @@ body{
     width: 30px; */
     padding: 24px;
 }
-#player1, #player2, #player3, #player4 { 
+
+
+#player1 { 
 	height: 100%; 
 	width: 70px;
+}
+
+#player2 { 
+	height: 100%; 
+	width: 70px;
+}
+
+#player3 { 
+	height: 100%;
+	width: 70px; 
+}
+
+#player4 { 
+	height: 100%; 
+	width: 70px;
+}
+
+#text{
+	width: 200px;
+	margin-right: 10px; 
+}
+
+#submit{
+	-webkit-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    -moz-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    -ms-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    -o-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    display: block;
+    margin: 20px auto;
+    max-width: 180px;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 20px 30px;
+}
+
+#submit{
+    color: rgba(30, 22, 54, 0.6);
+    box-shadow: rgba(30, 22, 54, 0.4) 0 0px 0px 2px inset;
+}
+
+#submit:hover {
+    color: rgba(255, 255, 255, 0.85);
+    box-shadow: rgba(30, 22, 54, 0.7) 0 80px 0px 2px inset;
 }
 
 /* ju-added css to text color for some notifiers */
@@ -65,7 +121,8 @@ body{
 	color: orangered;
 	text-decoration: underline;
 }
-#submit, #result {
+
+#result {
 	color:ghostwhite;
 	background-color: slateblue;
 	border: none;

@@ -112,7 +112,11 @@ function createForm(){
 function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<h3>').html(`Time Remaining: ${seconds}`);
+<<<<<<< HEAD
+    $('#timer').html(makeTimer);
+=======
     $('.timer').html(makeTimer);
+>>>>>>> 12bb2928867a7239b202ae22311a1379fa88cb10
     if (pageIndex == 0){
         if (seconds == 3){
             $('#h2P').text('ready?');
@@ -216,7 +220,7 @@ function findMeme (){
                 docP = $('<h4>').attr('id','userText').text('');
 
             //variable rn is used here at the image's source  
-            var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
+            var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName).attr('class', 'm-3');
                 
                 imgDiv.append(makeImg);
                 imgDiv.prepend(docP);
