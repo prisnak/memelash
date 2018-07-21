@@ -22,12 +22,14 @@ var playerActive = [];
 
 
 var scoreIcon;
-// var scoreSpan;
 //change winningScore to 10 once firebase is ready
 var winningScore = 3;
-//for now only will work for player 1.
-var oppScore = 3;
-var myScore;
+//for demo purposes, created 4 vars for all players to play on one computer
+var p1Score;
+var p2Score;
+var p3Score;
+var p4Score;
+
 
 function pageReader(){
         if (topTwoA.length == 2){
@@ -49,7 +51,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden");
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        myScore = parseInt($('#player1').text());        
+        p1Score = parseInt($('#player1').text());        
         $(this).remove();
     } else if(player == 2){
       $("#check2").removeClass("hidden");
@@ -59,7 +61,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        oppScore = parseInt($('#player2').text());
+        p2Score = parseInt($('#player2').text());
         $(this).remove();
     } else if (player == 3){
       $("#check3").removeClass("hidden");
@@ -67,7 +69,8 @@ $(document).on("click", ".container button", function(){
         scoreIcon.attr('id','player3').text(0);
         $('.scoreDiv').removeClass("hidden")
         scoreIcon.addClass('m-2 rounded-circle bg-primary text-center text-white numberVote')
-        //ju        
+        //ju
+        p3Score = parseInt($('#player3').text());                
         $('.scoreDiv').append(scoreIcon);
         $(this).remove();        
     } else if (player == 4){
@@ -76,7 +79,8 @@ $(document).on("click", ".container button", function(){
         scoreIcon.attr('id','player4').text(0);
         scoreIcon.addClass('m-2 rounded-circle bg-success text-center text-white numberVote')
         $('.scoreDiv').removeClass("hidden")
-        //ju        
+        //ju
+        p4Score = parseInt($('#player4').text());                
         $('.scoreDiv').append(scoreIcon);
         $(this).remove();
         
@@ -112,11 +116,7 @@ function createForm(){
 function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<h3>').html(`Time Remaining: ${seconds}`);
-<<<<<<< HEAD
-    $('#timer').html(makeTimer);
-=======
     $('.timer').html(makeTimer);
->>>>>>> 12bb2928867a7239b202ae22311a1379fa88cb10
     if (pageIndex == 0){
         if (seconds == 3){
             $('#h2P').text('ready?');
@@ -220,7 +220,7 @@ function findMeme (){
                 docP = $('<h4>').attr('id','userText').text('');
 
             //variable rn is used here at the image's source  
-            var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName).attr('class', 'm-3');
+            var makeImg = $('<img>').attr('src', response.result[rn].imageUrl).attr('alt',response.result[rn].urlName);
                 
                 imgDiv.append(makeImg);
                 imgDiv.prepend(docP);
@@ -230,11 +230,104 @@ function findMeme (){
 
 }
 
+//VOTING FUNCTION
+function voteRound(){
+    pageIndex = [];
+    var page = 2;
+    pageIndex.push(page);
+    $('.formContainer').empty();
+    var resultButton = $('<button>').text('submit vote').attr('id','result');
+//timer
+    seconds = 11;
+    clearInterval(timer);
+    timer = setInterval(setTimer, 1000);
+    docP.remove();
+    userInput = [];
+
+    for (c in topTwoA){   
+        console.log(topTwoA[c]);
+        var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');
+        var a = topTwoA[c];
+        var radioDiv = $('<div>').addClass('radio');
+        var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
+        var createLabel = $('<label>').text(a);
+            radioDiv.append(createChoices).append(createLabel);
+            $('.gameNotifier').html(notify);
+            $('.voteContainer').append(radioDiv);
+            $('.voteContainer').append(resultButton);            
+    }
+}
+
+//RESULTS FUNCTION
+function showResults(){
+    pageIndex = [];
+    var page = 3;
+    pageIndex.push(page);
+//timer
+    seconds = 6;
+    clearInterval(timer);
+    timer = setInterval(setTimer, 1000);
+    userInput = [];
+    var notify = $('<h4>').text('get ready for the next round').attr('id','notifier');    
+    var q = parseInt($(`input:radio[name='a']:checked`).val());
+    var voted = $('<h4>').attr('id', 'userText').text(`the winner is: ${topTwoA[q]}`);
+        $('.gameNotifier').html(notify);
+        $('.messageContainer').append(voted);
+        userVote.push(q);
+
+        if (q == 0){
+            p1Score++;
+            $('#player1').text(p1Score);
+            return;
+        }
+        else if (q == 1){
+            p2Score++;
+            $('#player2').text(p2Score);
+            return;
+        }
+        
+}
+//RESULTS ONCLICK FUNCTION
+$(document).on('click','#result', function(){
+    if (userVote.length == 1){
+        return;
+    }
+    showResults();
+
+})
+
+//FINAL RESULTS FUNCTION 
+function finalResults(){
+    if (p1Score == winningScore || p2Score == winningScore){
+        pageIndex = [];
+        var page = 4;
+        pageIndex.push(page);
+        clearInterval(timer);
+        console.log('score reached');
+        $('.timer').empty();
+        $('.messageContainer').empty();
+        // $('.displayImage').empty();
+        $('.gameNotifier').empty();
+        $('.voteContainer').empty();
+        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
+        $('.displayImage').html(makeImg);
+        if(p1Score == winningScore){
+            $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
+        }
+        if(p2Score == winningScore){
+            $('.messageContainer').html(`<h3>player 2 wins!</h3>`);
+        }
+
+    }else{console.log('score not reached')};
+}
+
+
+
 //SUBMIT FUNCTION
 $(document).on('click', '#submit', function(){
     event.preventDefault();
     var input = $('#text').val();
-    
+    //changed to 4 for demo purposes
     if (topTwoA.length >= 2){
         return;
     }
@@ -256,110 +349,8 @@ $(document).on('click', '#submit', function(){
         database.ref().update({submitCounter: submitNum});
 
     }
-})
-
-//VOTING FUNCTION
-function voteRound(){
-    pageIndex = [];
-    var page = 2;
-    pageIndex.push(page);
-
-    $('.formContainer').empty();
-    var submitVButton = $('<button>').text('submit vote').attr('id','voteSubmit');
-    seconds = 11;
-    clearInterval(timer);
-    timer = setInterval(setTimer, 1000);
-    docP.remove();
-    userInput = [];
-    for (c in topTwoA){   
-        console.log(topTwoA[c]);
-        var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');
-        var a = topTwoA[c];
-        var radioDiv = $('<div>').addClass('radio');
-        var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
-        var createLabel = $('<label>').text(a);
-        radioDiv.append(createChoices).append(createLabel);
-        $('.gameNotifier').append(notify);
-        $('.voteContainer').append(radioDiv);
-        $('.voteContainer').append(submitVButton);
-
-            
-    }
-
-
-}
-
-//RESULTS FUNCTION
-function showResults(){
-    pageIndex = [];
-    var page = 3;
-    pageIndex.push(page);
-//timer
-    seconds = 6;
-    clearInterval(timer);
-    timer = setInterval(setTimer, 1000);
-    userInput = [];
-    var notify = $('<h4>').text('get ready for the next round').attr('id','notifier');    
-    var q = parseInt($(`input:radio[name='a']:checked`).val());
-    var voted = $('<h4>').attr('id', 'userText').text(`the winner is: ${topTwoA[q]}`);
-        $('.gameNotifier').html(notify);
-        $('.messageContainer').append(voted);
-        userVote.push(q);
-
-        if (q == 0){
-            myScore++;
-            $('#player1').text(myScore);
-            return;
-        }
-        else if (q == 1){
-            oppScore++;
-            $('#player2').text(oppScore);
-            return;
-        }
-}
-//RESULTS ONCLICK FUNCTION
-$(document).on('click','#voteSubmit', function(){
-    if (userVote.length == 1){
-        return;
-    }
-    debugger;
-    showResults();
 
 })
-// https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif
-//test button for final results
-// var testButton = $('<button>').text('test final');
-// $('.test').append(testButton);
-//FINAL RESULTS FUNCTION 
-function finalResults(){
-    if (myScore == winningScore || oppScore == winningScore){
-        pageIndex = [];
-        var page = 4;
-        pageIndex.push(page);
-        clearInterval(timer);
-        console.log('score reached');
-        $('.timer').empty();
-        $('.messageContainer').empty();
-        // $('.displayImage').empty();
-        $('.gameNotifier').empty();
-        $('.voteContainer').empty();
-        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
-        $('.displayImage').html(makeImg);
-        if(myScore == winningScore){
-            $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
-        }
-        if(oppScore == winningScore){
-            $('.messageContainer').html('player 2 wins!');
-        }
-
-    }else{console.log('score not reached')};
-}
-// $(document).on('click', '.test button', function(){
-//     finalResults();
-// })
-
-
-
 
 //Firebase Code
 
@@ -459,3 +450,4 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
+//
