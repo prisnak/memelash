@@ -1,17 +1,17 @@
 
 /*hiding checked image*/
-.hidden{
+ .hidden{
 	display: none;
-}
+} 
 
 /*font*/
 *{
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-family: 'Reem Kufi', sans-serif;
 	text-transform: lowercase;
 }
-body{
-	/*margin: auto;*/
-	text-align: center;
+/*hiding checked image*/
+.hidden{
+	display: none;
 }
 
 /*close button*/
@@ -37,37 +37,25 @@ body{
 	/*height: 264px;*/
 	width: 90%;
 	text-align: center;
-}
 
-#displayImage {
-	margin: auto;
+#displayImage{
 	height: 50%;
 	width: 50%;
-	text-align: center;
 }
 .scoreDiv {
 	width: 370px;
 	height: 75px;
-	/* can remove background color later. just for ref */
-	/* background-color: silver; */
-	/*padding: 30px;*/
-	text-align: center;
 }
 
 .score {
-	text-align: center; 
+	/* text-align: center; 
 	float: left;
-    size: 7ex;
-    bottom: 8px;
-    right: 8px;
 	color: ghostwhite;
     border-radius: 50%;
     height: 30px;
-    width: 30px;
-    padding: 3px;
+    width: 30px; */
+    padding: 24px;
 }
-
-#1, 
 
 
 #player1 { 
@@ -89,8 +77,6 @@ body{
 	height: 100%; 
 	width: 70px;
 }
-
-
 
 #text{
 	width: 200px;
@@ -121,3 +107,17 @@ body{
     box-shadow: rgba(30, 22, 54, 0.7) 0 80px 0px 2px inset;
 }
 
+/* ju-added css to text color for some notifiers */
+#warning {
+	color: red;
+}
+#notifier {
+	color: orangered;
+	text-decoration: underline;
+}
+
+#result {
+	color:ghostwhite;
+	background-color: slateblue;
+	border: none;
+}
