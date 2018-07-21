@@ -22,12 +22,36 @@ var playerActive = [];
 
 
 var scoreIcon;
-// var scoreSpan;
 //change winningScore to 10 once firebase is ready
 var winningScore = 3;
-//for now only will work for player 1.
-var oppScore = 3;
-var myScore;
+//for demo purposes, created 4 vars for all players to play on one computer
+// var players = [
+//     {
+//     player: 1,
+//     score: 0,
+//     input:'',
+//     },
+//     {
+//     player: 2,
+//     score: 0,
+//     input:'',
+//     },
+//     {
+//     player: 3,
+//     score: 0,
+//     input:'',
+//     },
+//     {
+//     player: 4,
+//     score: 0,
+//     input:'',
+//     }
+// ]
+var p1Score;
+var p2Score;
+var p3Score;
+var p4Score;
+
 
 function pageReader(){
         if (topTwoA.length == 2){
@@ -49,7 +73,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden");
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        myScore = parseInt($('#player1').text());        
+        p1Score = parseInt($('#player1').text());        
         $(this).remove();
     } else if(player == 2){
       $("#check2").removeClass("hidden");
@@ -59,7 +83,7 @@ $(document).on("click", ".container button", function(){
         $('.scoreDiv').removeClass("hidden")
         $('.scoreDiv').append(scoreIcon);
         //ju        
-        oppScore = parseInt($('#player2').text());
+        p2Score = parseInt($('#player2').text());
         $(this).remove();
     } else if (player == 3){
       $("#check3").removeClass("hidden");
@@ -67,7 +91,8 @@ $(document).on("click", ".container button", function(){
         scoreIcon.attr('id','player3').text(0);
         $('.scoreDiv').removeClass("hidden")
         scoreIcon.addClass('m-2 rounded-circle bg-primary text-center text-white numberVote')
-        //ju        
+        //ju
+        p3Score = parseInt($('#player3').text());                
         $('.scoreDiv').append(scoreIcon);
         $(this).remove();        
     } else if (player == 4){
@@ -76,7 +101,8 @@ $(document).on("click", ".container button", function(){
         scoreIcon.attr('id','player4').text(0);
         scoreIcon.addClass('m-2 rounded-circle bg-success text-center text-white numberVote')
         $('.scoreDiv').removeClass("hidden")
-        //ju        
+        //ju
+        p4Score = parseInt($('#player4').text());                
         $('.scoreDiv').append(scoreIcon);
         $(this).remove();
         
@@ -274,15 +300,16 @@ function showResults(){
         userVote.push(q);
 
         if (q == 0){
-            myScore++;
-            $('#player1').text(myScore);
+            p1Score++;
+            $('#player1').text(p1Score);
             return;
         }
         else if (q == 1){
-            oppScore++;
-            $('#player2').text(oppScore);
+            p2Score++;
+            $('#player2').text(p2Score);
             return;
         }
+        
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
@@ -295,7 +322,7 @@ $(document).on('click','#result', function(){
 
 //FINAL RESULTS FUNCTION 
 function finalResults(){
-    if (myScore == winningScore || oppScore == winningScore){
+    if (p1Score == winningScore || p2Score == winningScore){
         pageIndex = [];
         var page = 4;
         pageIndex.push(page);
@@ -308,10 +335,10 @@ function finalResults(){
         $('.voteContainer').empty();
         var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
         $('.displayImage').html(makeImg);
-        if(myScore == winningScore){
+        if(p1Score == winningScore){
             $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
         }
-        if(oppScore == winningScore){
+        if(p2Score == winningScore){
             $('.messageContainer').html(`<h3>player 2 wins!</h3>`);
         }
 
@@ -324,7 +351,7 @@ function finalResults(){
 $(document).on('click', '#submit', function(){
     event.preventDefault();
     var input = $('#text').val();
-    
+    //changed to 4 for demo purposes
     if (topTwoA.length >= 2){
         return;
     }
