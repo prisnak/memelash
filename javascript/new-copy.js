@@ -192,11 +192,10 @@ function showResults(){
     //value of the vote that was checked (also its position) its either 0 or 1
     q = $(`input:radio[name='a']:checked`).val();
     console.log(q);
-    var voted = $('<p>').addClass('#userText');
+    var voted = $('<p>').addClass('userText mx-auto');
     voted.text(`the winner is: ${topTwoA[q]}`);
     $('.gameNotifier').html(notify);
     $('.messageContainer').append(voted);
-    debugger;
     userVote = q;
     database.ref().on("value", function(snapshot) {
         if(votesA > votesB) database.ref('players/player-info').update({
