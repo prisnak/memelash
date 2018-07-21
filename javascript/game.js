@@ -259,7 +259,7 @@ function voteRound(){
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
-<<<<<<< HEAD
+
     $('.formContainer').empty();
     var submitVButton = $('<button>').text('submit vote').attr('id','voteSubmit');
     seconds = 11;
@@ -267,16 +267,6 @@ function voteRound(){
     timer = setInterval(setTimer, 1000);
     docP.remove();
     userInput = [];
-=======
-        $('.formContainer').empty();
-    var resultButton = $('<button>').text('submit vote').attr('id','result');
-//timer
-        seconds = 11;
-        clearInterval(timer);
-        timer = setInterval(setTimer, 1000);
-        docP.remove();
-        userInput = [];
->>>>>>> 90ebcca7ec6746719f42685bcf1e3355d34f3707
     for (c in topTwoA){   
         console.log(topTwoA[c]);
         var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');
@@ -284,17 +274,11 @@ function voteRound(){
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
-<<<<<<< HEAD
         radioDiv.append(createChoices).append(createLabel);
         $('.gameNotifier').append(notify);
         $('.voteContainer').append(radioDiv);
         $('.voteContainer').append(submitVButton);
-=======
-            radioDiv.append(createChoices).append(createLabel);
-            $('.gameNotifier').html(notify);
-            $('.voteContainer').append(radioDiv);
-            $('.voteContainer').append(resultButton);
->>>>>>> 90ebcca7ec6746719f42685bcf1e3355d34f3707
+
             
     }
 
