@@ -226,19 +226,47 @@ function findMeme (){
 
 }
 
+//SUBMIT FUNCTION
+$(document).on('click', '#submit', function(){
+    event.preventDefault();
+    var input = $('#text').val();
+    
+    if (topTwoA.length >= 2){
+        return;
+    }
+    if (input == ''){
+        return;
+    } 
+    else if (input != ""){
+        var b = $('#userText');
+        b.text(input);
+        $('.messageContainer').html(b);
+        userInput.push(input);
+        topTwoA.push(input);
+        $('#text').val("");
+        database.ref('submits').set({
+            uid: uid,
+            answer: input
+        })
+        submitNum++;
+        database.ref().update({submitCounter: submitNum});
+
+    }
+})
+
 //VOTING FUNCTION
 function voteRound(){
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
-        $('.formContainer').empty();
-    var resultButton = $('<button>').text('submit vote').attr('id','result');
-//timer
-        seconds = 11;
-        clearInterval(timer);
-        timer = setInterval(setTimer, 1000);
-        docP.remove();
-        userInput = [];
+    $('.formContainer').empty();
+    var submitVButton = $('<button>').text('submit vote').attr('id','voteSubmit');
+    seconds = 11;
+    clearInterval(timer);
+    timer = setInterval(setTimer, 1000);
+    docP.remove();
+    userInput = [];
+
     for (c in topTwoA){   
         console.log(topTwoA[c]);
         var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');
@@ -246,10 +274,11 @@ function voteRound(){
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
-            radioDiv.append(createChoices).append(createLabel);
-            $('.gameNotifier').html(notify);
-            $('.voteContainer').append(radioDiv);
-            $('.voteContainer').append(resultButton);
+        radioDiv.append(createChoices).append(createLabel);
+        $('.gameNotifier').append(notify);
+        $('.voteContainer').append(radioDiv);
+        $('.voteContainer').append(submitVButton);
+
             
     }
 
@@ -285,10 +314,11 @@ function showResults(){
         }
 }
 //RESULTS ONCLICK FUNCTION
-$(document).on('click','#result', function(){
+$(document).on('click','#voteSubmit', function(){
     if (userVote.length == 1){
         return;
     }
+    debugger;
     showResults();
 
 })
@@ -325,34 +355,7 @@ function finalResults(){
 // })
 
 
-//SUBMIT FUNCTION
-$(document).on('click', '#submit', function(){
-    event.preventDefault();
-    var input = $('#text').val();
-    
-    if (topTwoA.length >= 2){
-        return;
-    }
-    if (input == ''){
-        return;
-    } 
-    else if (input != ""){
-        var b = $('#userText');
-        b.text(input);
-        $('.messageContainer').html(b);
-        userInput.push(input);
-        topTwoA.push(input);
-        $('#text').val("");
-        database.ref('submits').set({
-            uid: uid,
-            answer: input
-        })
-        submitNum++;
-        database.ref().update({submitCounter: submitNum});
 
-    }
-
-})
 
 //Firebase Code
 
@@ -452,4 +455,3 @@ database.ref('submits').on("value", function(snap) {
 database.ref('votesA').on("value", function(snap) {
     console.log('votes');
 });
-//

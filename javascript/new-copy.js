@@ -1,59 +1,26 @@
-
-var player, playerInfo, memeImg, timer, seconds, scoreIcon, scoreSpan, q, queryURL;
-var votesA, votesB, submitNum, playerCounter = 0;
-
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
-var rn, docP = '';
+var rn = '';
+var docP = '';
 // this stores user's input
+var userInput = [];
+var seconds;
+var timer;
 // this empty array will hold all of the player's answers. 
+var topTwoA = [];
 // this stores user's vote
-var userInput, topTwoA, userVote, playerActive = [];
+var userVote = [];
 var pageIndex = [0];
+var playerActive = [];
 
-//Firebase Code
+var scoreIcon;
+var scoreSpan;
 
-var config = {
-    apiKey: "AIzaSyB8-0Nof8ZMt0-ax-P7fvqdTBM5_HSvGF0",
-    authDomain: "raiders-project.firebaseapp.com",
-    databaseURL: "https://raiders-project.firebaseio.com",
-    projectId: "raiders-project",
-    storageBucket: "raiders-project.appspot.com",
-    messagingSenderId: "849203199588"
-  };
+//the vote that was checked
+var q;
+//the meme img for this round
+var queryURL;
 
-firebase.initializeApp(config);
-
-var database = firebase.database();
-
-database.ref().set({
-    players: JSON.stringify([]),
-    votesA: votesA,
-    votesB: votesB,
-    submits: JSON.stringify([]),
-    submitCounter: submitNum,
-    playerCount: playerCounter,
-    game: JSON.stringify([])
-})
-//=======================================================
-//AUTHENTICATION
-firebase.auth().signInAnonymously().catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-});
-
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        // User is signed in.
-        var isAnonymous = user.isAnonymous;
-        uid = user.uid;
-        console.log(user.uid);
-    } else {
-        // User is signed out.
-    }
-});
-var user = firebase.auth().currentUser;
 
 //==================================================================
 // TIMER FUNCTION
@@ -202,11 +169,12 @@ function voteRound(){
         var radioDiv = $('<div>').addClass('radio');
         var createChoices = $(`<input type="radio" name="a" value="${c}">`).attr('id','radio');
         var createLabel = $('<label>').text(a);
-            radioDiv.append(createChoices).append(createLabel);
-            $('.gameNotifier').append(notify);
-            $('.voteContainer').append(radioDiv);
-            $('.voteContainer').append(resultButton);        
+        radioDiv.append(createChoices).append(createLabel);
+        $('.gameNotifier').append(notify);
+        $('.voteContainer').append(radioDiv);
+        $('.voteContainer').append(resultButton);        
     }
+
 }
 //==============================================
 //RESULTS FUNCTION
@@ -226,10 +194,17 @@ function showResults(){
     console.log(q);
     var voted = $('<p>').addClass('#userText');
     voted.text(`the winner is: ${topTwoA[q]}`);
-        $('.gameNotifier').html(notify);
-        $('.messageContainer').append(voted);
-        // debugger;
-        userVote = q;
+    $('.gameNotifier').html(notify);
+    $('.messageContainer').append(voted);
+    debugger;
+    userVote = q;
+    database.ref().on("value", function(snapshot) {
+        if(votesA > votesB) database.ref('players/player-info').update({
+                points: 2,
+            })
+       
+    })
+    
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
@@ -237,7 +212,67 @@ $(document).on('click','#result', function(){
     //     return;
     // }
     showResults();
+    // database.ref().on("value", function(snapshot) {
+    //     database.ref().update({
+    //         votesA: 0,
+    //         votesB: 0
+    //     })
+    // })
 })
+
+//Firebase Code
+
+var config = {
+    apiKey: "AIzaSyB8-0Nof8ZMt0-ax-P7fvqdTBM5_HSvGF0",
+    authDomain: "raiders-project.firebaseapp.com",
+    databaseURL: "https://raiders-project.firebaseio.com",
+    projectId: "raiders-project",
+    storageBucket: "raiders-project.appspot.com",
+    messagingSenderId: "849203199588"
+  };
+
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+var player;
+var players = database.ref('players');
+var playerCounter = 0;
+var votesA = 0;
+var votesB = 0;
+var playerInfo;
+var submitNum = 0;
+var memeImg;
+var checkImg1;
+
+database.ref().set({
+    players: JSON.stringify([]),
+    votesA: votesA,
+    votesB: votesB,
+    submits: JSON.stringify([]),
+    submitCounter: submitNum,
+    playerCount: playerCounter,
+    game: JSON.stringify([])
+})
+//=======================================================
+//AUTHENTICATION
+firebase.auth().signInAnonymously().catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+});
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        uid = user.uid;
+        console.log(user.uid);
+    } else {
+        // User is signed out.
+    }
+});
+var user = firebase.auth().currentUser;
 
 //=========================================================
 //ASSIGNING PLAYERS
@@ -245,59 +280,69 @@ var checkSrc1 = $('#check1').attr('src');
 var checkSrc2 = $('#check2').attr('src');
 var checkSrc3 = $('#check3').attr('src');
 var checkSrc4 = $('#check4').attr('src');
-
-
+checkSrc1 = '';
+checkSrc2 = '';
+checkSrc3 = '';
+checkSrc4 = '';
 //No longer need hidden value
 
 $(document).ready(function() {
     //keeps checks hidden on load
-    checkSrc1 = '';
-    checkSrc2 = '';
-    checkSrc3 = '';
-    checkSrc4 = '';
+
     $('#check1').attr('src', checkSrc1);
     $('#check2').attr('src', checkSrc2);
     $('#check3').attr('src', checkSrc3);
     $('#check4').attr('src', checkSrc4);
 
 })
+database.ref('/game').on('value', function (snap) {
+    if(snap.child('player1C') == 'images/checked.png') {
+        console.log('here');
+        checkSrc1 = snap.val().player1C; 
+        checkImg1 = $("#check1").attr('src', checkSrc1);
+        console.log(snap.val().player1C);   
+        $('#check1').html(checkImg1);
+        $('#check1').attr('src', snap.val().player1C);
+        scoreIcon.attr('id','player1');
+        $('.scoreDiv').append(scoreIcon);
+    }
 
-$(document).on('click', '.container button', function(event) {
-    event.preventDefault();
-    var player = parseInt($(this).attr("id"));
-    scoreIcon = $('<div>').addClass('score');
-    scoreSpan = $('<span>').attr('id','counter').text(0);
-    scoreIcon.append(scoreSpan);
-    database.ref('players').child('player-info').set({
-        uid: uid,
-        player: player,
-        points: 0,
-        submits: 0
-    });
-    playerInfo = database.ref('players').child('player');
-    database.ref().update({playerCount: playerCounter});
-    database.ref('players/player-info').update({
-        uid: uid,
-        player: player,
-        points: 0,
-        submits: 0
-    })
 
-    database.ref('/game').on('value', function (snap) {
-        if(snap.child('player1C').exists()) {
-            console.log('here');
-            checkImg1 = $("#check1").attr('src', checkSrc1);
-                console.log(snap.val().player1C);   
-                $('#check1').html(checkImg1);
-                scoreIcon.attr('id','player1');
-                $('.scoreDiv').append(scoreIcon);
-        }
-        if (player == 1 ){
-            playerActive.push(player);
-            checkSrc1 = 'images/checked.png';
-            // checkSrc1 = 'https://freeiconshop.com/wp-content/uploads/edd/checkmark-solid.png';
-            database.ref('game').update({player1C: checkSrc1});
-            // database.ref('/game').on('value', function (snap) {
+    $(document).on('click', '.container button', function(event) {
+        event.preventDefault();
+        var player = parseInt($(this).attr("id"));
+        scoreIcon = $('<div>').addClass('score');
+        scoreSpan = $('<span>').attr('id','counter').text(0);
+        scoreIcon.append(scoreSpan);
+        database.ref('players').child('player-info').set({
+            uid: uid,
+            player: player,
+            points: 0,
+            submits: 0
+        });
+        playerInfo = database.ref('players').child('player');
+        database.ref().update({playerCount: playerCounter});
+        database.ref('players/player-info').update({
+            uid: uid,
+            player: player,
+            points: 0,
+            submits: 0
+        })
+
+        // database.ref('/game').on('value', function (snap) {
+        //     if(snap.child('player1C') == 'images/checked.png') {
+        //         console.log('here');
+        //         checkImg1 = $("#check1").attr('src', checkSrc1);
+        //             console.log(snap.val().player1C);   
+        //             $('#check1').html(checkImg1);
+        //             scoreIcon.attr('id','player1');
+        //             $('.scoreDiv').append(scoreIcon);
+        //     }
+        //     })
+            if (player == 1){
+                playerActive.push(player);
+                checkSrc1 = 'images/checked.png';
+                database.ref('game').update({player1C: checkSrc1});
                 checkSrc1 = snap.val().player1C; 
                 checkImg1 = $("#check1").attr('src', checkSrc1);
                 console.log(snap.val().player1C);   
@@ -305,61 +350,82 @@ $(document).on('click', '.container button', function(event) {
                 $('#check1').attr('src', snap.val().player1C);
                 scoreIcon.attr('id','player1');
                 $('.scoreDiv').append(scoreIcon);
-            // })    
-        } 
-        if (player == 2){
-                playerActive.push(player);
-                checkSrc2 = 'images/checked.png';
-                database.ref('game').update({player2C: checkSrc2});
-                checkSrc2 = snap.val().player2C; 
-                var checkImg = $("#check2").attr('src', snap.val().player2C);
-                console.log(snap.val().player2C);   
-                console.log(checkSrc2);
-                $('#check2').html(checkImg);
-                scoreIcon.attr('id','player2');
-                $('.scoreDiv').append(scoreIcon);
+                // })    
             } 
-            if (player == 3){
-                playerActive.push(player);
-                checkSrc3 = 'images/checked.png';
-                database.ref('game').update({player3C: checkSrc3});
-                checkSrc3 = snap.val().player3C; 
-                var checkImg = $("#check3").attr('src', snap.val().player3C);
-                console.log(snap.val().player3C);   
-                console.log(checkSrc3);
-                $('#check3').html(checkImg);
-                scoreIcon.attr('id','player3');
-                $('.scoreDiv').append(scoreIcon);
-            } 
-            if (player == 4){
-                playerActive.push(player);
-                checkSrc4 = 'images/checked.png';
-                database.ref('game').update({player4C: checkSrc4});
-                checkSrc4 = snap.val().player4C; 
-                var checkImg = $("#check4").attr('src', snap.val().player4C);
-                console.log(snap.val().player4C);   
-                console.log(checkSrc4);
-                $('#check4').html(checkImg);
-                scoreIcon.attr('id','player4');
-                $('.scoreDiv').append(scoreIcon);
-            }
-            if (playerActive.length == 1){
-                $('#h2P').text('waiting for more players...');
-                seconds = 11;
-                clearInterval(timer);
-                timer = setInterval(setTimer, 1000);
-            }
-            console.log(playerCounter);
-            console.log(player);
-        })
-
+            if (player == 2){
+                    playerActive.push(player);
+                    checkSrc2 = 'images/checked.png';
+                    database.ref('game').update({player2C: checkSrc2});
+                    checkSrc2 = snap.val().player2C; 
+                    var checkImg = $("#check2").attr('src', snap.val().player2C);
+                    console.log(snap.val().player2C);   
+                    console.log(checkSrc2);
+                    $('#check2').html(checkImg);
+                    scoreIcon.attr('id','player2');
+                    $('.scoreDiv').append(scoreIcon);
+                } 
+                if (player == 3){
+                    playerActive.push(player);
+                    checkSrc3 = 'images/checked.png';
+                    database.ref('game').update({player3C: checkSrc3});
+                    checkSrc3 = snap.val().player3C; 
+                    var checkImg = $("#check3").attr('src', snap.val().player3C);
+                    console.log(snap.val().player3C);   
+                    console.log(checkSrc3);
+                    $('#check3').html(checkImg);
+                    scoreIcon.attr('id','player3');
+                    $('.scoreDiv').append(scoreIcon);
+                } 
+                if (player == 4){
+                    playerActive.push(player);
+                    checkSrc4 = 'images/checked.png';
+                    database.ref('game').update({player4C: checkSrc4});
+                    checkSrc4 = snap.val().player4C; 
+                    var checkImg = $("#check4").attr('src', snap.val().player4C);
+                    console.log(snap.val().player4C);   
+                    console.log(checkSrc4);
+                    $('#check4').html(checkImg);
+                    scoreIcon.attr('id','player4');
+                    $('.scoreDiv').append(scoreIcon);
+                }
+                if (playerActive.length == 1){
+                    $('#h2P').text('waiting for more players...');
+                    seconds = 11;
+                    clearInterval(timer);
+                    timer = setInterval(setTimer, 1000);
+                }
+                console.log(playerCounter);
+                console.log(player);
+            })
     })
+
+
+   
 
 //ADDING THEM TO THE PLAYER COUNTER
 database.ref("players").on("child_added", function(snapshot) {
     playerCounter++;
 });
+//=============================================================
+//CONNECTIONS
 
+var connectionsRef = database.ref("/connections");
+var connectedRef = database.ref(".info/connected");
+
+connectedRef.on("value", function(snap) {
+  // If they are connected..
+  if (snap.val()) {
+    // Add user to the connections list.
+    var con = connectionsRef.push(true);
+    // Remove user from the connection list when they disconnect.
+    con.onDisconnect().remove();
+  }
+});
+
+connectionsRef.on("value", function(snap) {
+  // The number of online users is the number of children in the connections list.
+  $("#watchers").text(snap.numChildren());
+});
 //===========================================================
 //SUBMITTING FORMS
 
@@ -386,7 +452,7 @@ $(document).on('click', '#submit', function(){
         })
         submitNum++;
         database.ref().update({submitCounter: submitNum});
-        database.ref('players/player-info').update({submits: 1});
+        database.ref('players/player-info').update({submits: submitNum});
     }
 });
 
@@ -409,4 +475,5 @@ $(document).on('click', '.submit-vote', function () {
         votesB ++;
         database.ref().update({votesB: votesB});
     }
+    if(votesA > votesB) console.log('more votes to a')
 });

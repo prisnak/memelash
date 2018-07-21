@@ -1,8 +1,17 @@
+<<<<<<< ec-firebase-7/14
+
+/*hiding checked image*/
+/* .hidden{
+	display: none;
+} */
+
+=======
 body{
 	text-align: center;
 	margin: auto;
 	background-color: ghostwhite;
 }
+>>>>>>> master
 /*font*/
 *{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
