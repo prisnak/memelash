@@ -49,6 +49,7 @@ $(document).on("click", ".container button", function(){
         scoreIcon.attr('id','player1').text(0);
         scoreIcon.addClass('m-2 rounded-circle bg-warning text-center text-white numberVote');
         $('.scoreDiv').removeClass("hidden");
+        $('.scoreDiv').css('display', 'flex');
         $('.scoreDiv').append(scoreIcon);
         //ju        
         p1Score = parseInt($('#player1').text());        
@@ -309,7 +310,7 @@ function finalResults(){
         // $('.displayImage').empty();
         $('.gameNotifier').empty();
         $('.voteContainer').empty();
-        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
+        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner').css('width','370px').css('height','264px');  
         $('.displayImage').html(makeImg);
         if(p1Score == winningScore){
             $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
