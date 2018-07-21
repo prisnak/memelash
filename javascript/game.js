@@ -17,12 +17,12 @@ var timer;
 var topTwoA = [];
 // this stores user's vote
 var userVote = [];
+//this array will help cycle through input, vote, and result rounds
 var pageIndex = [0];
 var playerActive = [];
 
-
 var scoreIcon;
-// var scoreSpan;
+var scoreSpan;
 //change winningScore to 10 once firebase is ready
 var winningScore = 3;
 //for now only will work for player 1.
@@ -105,8 +105,13 @@ function createForm(){
         formDiv.append(textField).append(submitButton);
         $('.formContainer').html(formDiv);
 }
-
-
+//this checks when the topTwoA array's max two inputs are added. once max is reached, voteRound starts. So players do not have to wait for timer to reach 0
+function pageReader(){
+    if (topTwoA.length == 2){
+        console.log(true);
+        voteRound();
+    }else(console.log(false));
+}
 
 // TIMER FUNCTION
 function setTimer(){
@@ -134,7 +139,8 @@ function setTimer(){
     }
 
     if (pageIndex == 1){
-        pageReader();        
+        //pageReader is only used in pageIndex 1 (input round) local if else statements caused bugs so its own function worked fine. it will check every second
+        pageReader();
         if (seconds === 0){
             voteRound();
             $('.gameNotifier').empty();
@@ -167,7 +173,6 @@ function setTimer(){
 
 
 //MEME GENERATOR FUNCTION
-
 function findMeme (){
     pageIndex = [];
     var page = 1;
@@ -175,7 +180,6 @@ function findMeme (){
     userInput = [];
     topTwoA = [];
     userVote = [];
-
     $('.messageContainer').empty();
     $('.voteContainer').empty();
     var notify = $('<h4>').text('caption this image!').attr('id','notifier');
@@ -300,6 +304,7 @@ function showResults(){
     var voted = $('<h4>').attr('id', 'userText').text(`the winner is: ${topTwoA[q]}`);
         $('.gameNotifier').html(notify);
         $('.messageContainer').append(voted);
+        userVote = q;
         userVote.push(q);
 
         if (q == 0){
@@ -348,13 +353,39 @@ function finalResults(){
             $('.messageContainer').html('player 2 wins!');
         }
 
-    }else{console.log('score not reached')};
-}
+
+
+//SUBMIT FUNCTION
+$(document).on('click', '#submit', function(){
+    event.preventDefault();
+    var input = $('#text').val();
+    
+    if (topTwoA.length >= 2){
+        return;
+    }
+    if (input == ''){
+        return;
+    } 
+    else if (input != ""){
+        var b = $('#userText');
+        b.text(input);
+        $('.messageContainer').html(b);
+        userInput.push(input);
+        topTwoA.push(input);
+        $('#text').val("");
+        console.log(topTwoA.length);
+        database.ref('submits').set({
+            uid: uid,
+            answer: input
+        })
+        submitNum++;
+        database.ref().update({submitCounter: submitNum});
+      }else{console.log('score not reached')};
+})
+      
 // $(document).on('click', '.test button', function(){
 //     finalResults();
 // })
-
-
 
 
 //Firebase Code
