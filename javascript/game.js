@@ -263,6 +263,7 @@ function voteRound(){
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
+
     $('.formContainer').empty();
     var submitVButton = $('<button>').text('submit vote').attr('id','voteSubmit');
     seconds = 11;
@@ -270,7 +271,6 @@ function voteRound(){
     timer = setInterval(setTimer, 1000);
     docP.remove();
     userInput = [];
-
     for (c in topTwoA){   
         console.log(topTwoA[c]);
         var notify = $('<h4>').text('vote for your favorite caption').attr('id','notifier');

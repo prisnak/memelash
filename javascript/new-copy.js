@@ -1,25 +1,14 @@
 var topic = ['funny', 'beer', 'jay-z', 'rap', 'dog', 'cat', 'girl', 'boy', 'poo', 'president', 'trump', 'sports', 'dance','drunk'];
 
-var rn = '';
-var docP = '';
-// this stores user's input
-var userInput = [];
-var seconds;
-var timer;
-// this empty array will hold all of the player's answers. 
-var topTwoA = [];
-// this stores user's vote
-var userVote = [];
+var rn, docP = '';
+var seconds, timer; 
+var topTwoA, userInput, userVote, playerActive = [];
 var pageIndex = [0];
-var playerActive = [];
 
-var scoreIcon;
-var scoreSpan;
+var scoreIcon, scoreSpan, myScore, q, queryURL;
 
-//the vote that was checked
-var q;
-//the meme img for this round
-var queryURL;
+var winningScore, oppScore = 3;
+
 
 
 //==================================================================
@@ -28,7 +17,7 @@ function setTimer(){
     seconds = seconds - 1;
     var makeTimer = $('<p>').html(`Time Remaining: ${seconds}`);
     $('#title').html(makeTimer);
-    timerDatabase();
+    database.ref('game').update({timer: seconds});
 
     if (pageIndex == 0){
         if (seconds == 3){
@@ -63,6 +52,9 @@ function setTimer(){
         }
     }
     if (pageIndex == 3){
+        if (seconds === 5){
+            finalResults();
+        }
         if (seconds === 0){
             findMeme();
         }
@@ -70,15 +62,6 @@ function setTimer(){
 
 }
 
-function timerDatabase () {
-    database.ref('game').update({timer: seconds});
-    database.ref("/game").on("value", function(snapshot) {
-        // Print the local data to the console.
-        seconds = snapshot.val().timer;
-        console.log('snapshot ' + snapshot.val().timer);
-        
-    });
-}
 //=================================================================
 //Submit Caption Form
 function createForm(){
@@ -107,7 +90,7 @@ function findMeme (){
     seconds = 21;
     clearInterval(timer);
     timer = setInterval(setTimer, 1000);
-    timerDatabase();
+    
 
     //generate random number to pull a random object/image from the 25 memes pulled from the ajax response
     rn = Math.floor(Math.random()* 24) +1;
@@ -147,11 +130,19 @@ function findMeme (){
             $('.displayImage').html(imgDiv);
         });
     });
-}    
+}
+//===========================================
+//Function to make page automatically start vote round after submits are in
+function pageReader(){
+    if (topTwoA.length == 2){
+        voteRound();
+    }else(console.log(false));
+}
+
 //==================================================================
 //VOTING FUNCTION
 function voteRound(){
-    timerDatabase();
+
     pageIndex = [];
     var page = 2;
     pageIndex.push(page);
@@ -179,7 +170,6 @@ function voteRound(){
 //==============================================
 //RESULTS FUNCTION
 function showResults(){
-    timerDatabase();
     pageIndex = [];
     var page = 3;
     pageIndex.push(page);
@@ -202,23 +192,53 @@ function showResults(){
         if(votesA > votesB) database.ref('players/player-info').update({
                 points: 2,
             })
+
+        if(votesB > votesA) database.ref('players/player-info').update({
+            points: 2
+        })
        
     })
     
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on('click','#result', function(){
-    // if (userVote.length == 1){
-    //     return;
-    // }
+    if (userVote.length == 1){
+        return;
+    }
     showResults();
-    // database.ref().on("value", function(snapshot) {
-    //     database.ref().update({
-    //         votesA: 0,
-    //         votesB: 0
-    //     })
-    // })
+
 })
+
+//FINAL RESULTS FUNCTION 
+function finalResults(){
+    if (myScore == winningScore || oppScore == winningScore){
+        pageIndex = [];
+        var page = 4;
+        pageIndex.push(page);
+        clearInterval(timer);
+        console.log('score reached');
+        $('.timer').empty();
+        $('.messageContainer').empty();
+        // $('.displayImage').empty();
+        $('.gameNotifier').empty();
+        $('.voteContainer').empty();
+        var makeImg = $('<img>').attr('src', 'https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif').attr('alt','winner');  
+        $('.displayImage').html(makeImg);
+        if(myScore == winningScore){
+            $('.messageContainer').html(`<h3>player 1 wins!</h3>`);
+        }
+        if(oppScore == winningScore){
+            $('.messageContainer').html('player 2 wins!');
+        }
+        database.ref().on("value", function(snapshot) {
+            database.ref().update({
+                votesA: 0,
+                votesB: 0
+            })
+    })
+
+    }else{console.log('score not reached')};
+}
 
 //Firebase Code
 
@@ -234,6 +254,7 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database();
+
 
 var player;
 var players = database.ref('players');
@@ -295,6 +316,15 @@ $(document).ready(function() {
     $('#check4').attr('src', checkSrc4);
 
 })
+
+//PSUEDOCODE
+//this is the code that I tried to implement to show how the player was chosen
+//if(snap.child('player1C') == imgsrc) {
+//    - update the current browser to display the check mark
+//    to indicate that a player has been chosen
+//    - deactivate the button once it has been selected
+//    -update to the firebase to have everything sync across different browsers
+//}
 database.ref('/game').on('value', function (snap) {
     if(snap.child('player1C') == 'images/checked.png') {
         console.log('here');
@@ -314,12 +344,6 @@ database.ref('/game').on('value', function (snap) {
         scoreIcon = $('<div>').addClass('score');
         scoreSpan = $('<span>').attr('id','counter').text(0);
         scoreIcon.append(scoreSpan);
-        database.ref('players').child('player-info').set({
-            uid: uid,
-            player: player,
-            points: 0,
-            submits: 0
-        });
         playerInfo = database.ref('players').child('player');
         database.ref().update({playerCount: playerCounter});
         database.ref('players/player-info').update({
@@ -329,75 +353,65 @@ database.ref('/game').on('value', function (snap) {
             submits: 0
         })
 
-        // database.ref('/game').on('value', function (snap) {
-        //     if(snap.child('player1C') == 'images/checked.png') {
-        //         console.log('here');
-        //         checkImg1 = $("#check1").attr('src', checkSrc1);
-        //             console.log(snap.val().player1C);   
-        //             $('#check1').html(checkImg1);
-        //             scoreIcon.attr('id','player1');
-        //             $('.scoreDiv').append(scoreIcon);
-        //     }
-        //     })
-            if (player == 1){
+        if (player == 1){
+            playerActive.push(player);
+            checkSrc1 = 'images/checked.png';
+            database.ref('game').update({player1C: checkSrc1});
+            checkSrc1 = snap.val().player1C; 
+            checkImg1 = $("#check1").attr('src', checkSrc1);
+            console.log(snap.val().player1C);   
+            // $('#check1').html(checkImg1);
+            $('#check1').attr('src', snap.val().player1C);
+            scoreIcon.attr('id','player1');
+            $('.scoreDiv').append(scoreIcon);
+            // })    
+        } 
+        if (player == 2){
                 playerActive.push(player);
-                checkSrc1 = 'images/checked.png';
-                database.ref('game').update({player1C: checkSrc1});
-                checkSrc1 = snap.val().player1C; 
-                checkImg1 = $("#check1").attr('src', checkSrc1);
-                console.log(snap.val().player1C);   
-                // $('#check1').html(checkImg1);
-                $('#check1').attr('src', snap.val().player1C);
-                scoreIcon.attr('id','player1');
+                checkSrc2 = 'images/checked.png';
+                database.ref('game').update({player2C: checkSrc2});
+                checkSrc2 = snap.val().player2C; 
+                var checkImg = $("#check2").attr('src', snap.val().player2C);
+                console.log(snap.val().player2C);   
+                console.log(checkSrc2);
+                $('#check2').html(checkImg);
+                scoreIcon.attr('id','player2');
                 $('.scoreDiv').append(scoreIcon);
-                // })    
             } 
-            if (player == 2){
-                    playerActive.push(player);
-                    checkSrc2 = 'images/checked.png';
-                    database.ref('game').update({player2C: checkSrc2});
-                    checkSrc2 = snap.val().player2C; 
-                    var checkImg = $("#check2").attr('src', snap.val().player2C);
-                    console.log(snap.val().player2C);   
-                    console.log(checkSrc2);
-                    $('#check2').html(checkImg);
-                    scoreIcon.attr('id','player2');
-                    $('.scoreDiv').append(scoreIcon);
-                } 
-                if (player == 3){
-                    playerActive.push(player);
-                    checkSrc3 = 'images/checked.png';
-                    database.ref('game').update({player3C: checkSrc3});
-                    checkSrc3 = snap.val().player3C; 
-                    var checkImg = $("#check3").attr('src', snap.val().player3C);
-                    console.log(snap.val().player3C);   
-                    console.log(checkSrc3);
-                    $('#check3').html(checkImg);
-                    scoreIcon.attr('id','player3');
-                    $('.scoreDiv').append(scoreIcon);
-                } 
-                if (player == 4){
-                    playerActive.push(player);
-                    checkSrc4 = 'images/checked.png';
-                    database.ref('game').update({player4C: checkSrc4});
-                    checkSrc4 = snap.val().player4C; 
-                    var checkImg = $("#check4").attr('src', snap.val().player4C);
-                    console.log(snap.val().player4C);   
-                    console.log(checkSrc4);
-                    $('#check4').html(checkImg);
-                    scoreIcon.attr('id','player4');
-                    $('.scoreDiv').append(scoreIcon);
-                }
-                if (playerActive.length == 1){
-                    $('#h2P').text('waiting for more players...');
-                    seconds = 11;
-                    clearInterval(timer);
-                    timer = setInterval(setTimer, 1000);
-                }
-                console.log(playerCounter);
-                console.log(player);
-            })
-    })
+            if (player == 3){
+                playerActive.push(player);
+                checkSrc3 = 'images/checked.png';
+                database.ref('game').update({player3C: checkSrc3});
+                checkSrc3 = snap.val().player3C; 
+                var checkImg = $("#check3").attr('src', snap.val().player3C);
+                console.log(snap.val().player3C);   
+                console.log(checkSrc3);
+                $('#check3').html(checkImg);
+                scoreIcon.attr('id','player3');
+                $('.scoreDiv').append(scoreIcon);
+            } 
+            if (player == 4){
+                playerActive.push(player);
+                checkSrc4 = 'images/checked.png';
+                database.ref('game').update({player4C: checkSrc4});
+                checkSrc4 = snap.val().player4C; 
+                var checkImg = $("#check4").attr('src', snap.val().player4C);
+                console.log(snap.val().player4C);   
+                console.log(checkSrc4);
+                $('#check4').html(checkImg);
+                scoreIcon.attr('id','player4');
+                $('.scoreDiv').append(scoreIcon);
+            }
+            if (playerActive.length == 1){
+                $('#h2P').text('waiting for more players...');
+                seconds = 11;
+                clearInterval(timer);
+                timer = setInterval(setTimer, 1000);
+            }
+            console.log(playerCounter);
+            console.log(player);
+        })
+})
 
 
    
@@ -432,7 +446,29 @@ connectionsRef.on("value", function(snap) {
 $(document).on('click', '#submit', function(){
     event.preventDefault();
     var input = $('#text').val();
-    
+    //PSUEDOCODE
+    // Create snapshot of which player uid submitted the form
+    //this keeps track of the first submit
+    //database.ref("player/player-info").on("value", function(snapshot) {
+    //  var sumbitUID = snapshot.val().uid;
+    //  if (topTwoA.length == 1) {
+            //database.ref('submits').update({
+        //      uid: submitUID,
+        //      answer: answer,
+        //      votePos: votesA
+    //      })
+    //}
+    //this keeps track of the second submit
+       //  if (topTwoA.length == 2) {
+            //database.ref('submits').update({
+        //      uid2: uid,
+        //      answer2: answer,
+        //      votePos2: votesB
+    //      })
+    //}
+    //  
+    //  
+        //}
     if (topTwoA.length >= 2){
         return;
     }

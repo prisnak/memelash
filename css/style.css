@@ -4,6 +4,12 @@
 	display: none;
 } 
 
+body{
+	text-align: center;
+	margin: auto;
+	background-color: ghostwhite;
+}
+
 /*font*/
 *{
 	font-family: 'Reem Kufi', sans-serif;
