@@ -493,13 +493,6 @@ function finalResults(){
     }
     if(votesA > votesB) {
         database.ref('/players/player-info').update({points: 2});
-        //, function(){
-        //     database.ref().update({
-        //         votesA: 0,
-        //         votesB: 0
-        //     })
-        // });
-
         database.ref().update({
             votesA: 0,
             votesB: 0
@@ -508,12 +501,6 @@ function finalResults(){
     }
     if(votesB > votesA) {
         database.ref('players/player-info').update({points: 2});
-    //         , function(){
-    //         database.ref().update({
-    //             votesA: 0,
-    //             votesB: 0
-    //         })
-    // }
         database.ref().update({
             votesA: 0,
             votesB: 0
@@ -522,8 +509,6 @@ function finalResults(){
 
     } 
 }
-
-
   
 
 //ADDING THEM TO THE PLAYER COUNTER
