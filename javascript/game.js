@@ -156,7 +156,7 @@ function findMeme() {
   rn = Math.floor(Math.random() * 24) + 1;
   var rw = Math.floor(Math.random() * topic.length);
   var sw = topic[rw];
-  var queryURL = `http://version1.api.memegenerator.net//Generators_Search?q=${sw}&pageSize=25&apiKey=ed0e5625-ed2d-4049-a830-bafce8b69716`;
+  var queryURL = `https://api.giphy.com/v1/gifs/random?api_key=uREZoMju3bSu2Sho19kTyRgJr6Tvhfhg&limit=25&tag=${sw}`;
   console.log(queryURL);
   console.log(sw);
   $.ajax({
@@ -173,8 +173,8 @@ function findMeme() {
 
     //variable rn is used here at the image's source
     var makeImg = $("<img>")
-      .attr("src", response.result[rn].imageUrl)
-      .attr("alt", response.result[rn].urlName);
+      .attr("src", response.data.image_url)
+      .attr("alt", response.data.title);
 
     imgDiv.append(makeImg);
     imgDiv.prepend(docP);
@@ -242,10 +242,10 @@ function showResults() {
   $(".gameNotifier").html(notify);
   $(".messageContainer").html(voted);
   userVote = q;
-  if (q == 1){
-    userScore = userScore+2;
+  if (q == 1) {
+    userScore = userScore + 2;
     gameInfo();
-    $('.voteContainer').empty();
+    $(".voteContainer").empty();
     return;
   }
 }
