@@ -324,7 +324,7 @@ function findMeme (){
     }).then(function(response) {
         console.log(response);
         var imgDiv = $('<div>').addClass('image');
-        docP = $('<p>').attr('id','userText').text('');
+        docP = $('<h4>').attr('id','userText').text('');
 
         //variable rn is used here at the image's source  
         var memeSRC = response.result[rn].imageUrl;
@@ -441,7 +441,7 @@ function showResults(){
     //value of the vote that was checked (also its position) its either 0 or 1
     q = $(`input:radio[name='a']:checked`).val();
     console.log(q);
-    var voted = $('<p>').addClass('#userText');
+    var voted = $('<p>').addClass('userText mx-auto');
     voted.text(`the winner is: ${topTwoA[q]}`);
     $('.gameNotifier').html(notify);
     $('.messageContainer').append(voted);

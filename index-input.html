@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	
+
 	<title>Memelash Game</title>
-	
+
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 	<!-- Google fonts -->
@@ -15,94 +16,59 @@
 </head>
 
 <body id="corpo">
-    	
+
 	<!-- game name MOVE UP-->
-    <img class="text-center mx-auto m-2" src="images/logoMeme.png">
+	<img class="text-center mx-auto m-2" src="images/logoMeme.png">
 
 	<!-- score MOVE DOWN-->
-	<div>
-	<!-- <div class="scoreDiv hidden row m-3"></div>
-	</div>
-        <!-- <div class="buttonContainer"></div>
-        <div class="timer"></div>
-        <div class="inputContainer">
-                <div class="messageContainer"></div>
-                <div class="displayImage"></div>
-                <div class="formContainer"></div>
-                <div class="voteContainer"></div>
-        </div> -->
+	<div class="timer"></div>
+	<div class="gameInfo"></div>
+		<!-- homepage main image: Gotta Go Fast-->
+	<!-- <div class="start-screen">	 -->
+		<div id="mainImg">
+			<div id="watchers"></div>
+			<img class="rounded mx-auto d-block m-3" id="gottaGoImg" src="images/gottagofast.jpg">
+		</div>
 
-    <!-- //ju- added my divs  -->
-    <div class="gameNotifier"></div>
+		<div class="messageContainer"></div>
+		<div class="displayImage mb-2 mt-2"></div>
 
-	<!-- homepage main image: Gotta Go Fast-->
-	<div id="mainImg">
-	<div id="watchers"></div>
-    <img class="rounded mx-auto d-block m-3" id="gottaGoImg" src="images/gottagofast.jpg">
-    </div>
-
-    <!-- //ju- added my divs  -->
-    <div class="messageContainer"></div>    
-    <div class="displayImage mb-2 mt-2"></div>
-
-	<!-- text -->
-	<h2 class="h2 row justify-content-sm-center m-3" id='h2P'>PICK A PLAYER TO PLAY</h2>
-
-	<!-- div with players buttons and checked images -->
-	<div class="container">
-		<form>
-			<h1>Welcome!</h1>
+		<!-- text -->
+		<h2 class="h2 row justify-content-sm-center m-3" id='h2P'>Create or Join a Session</h2>
+		<form class = 'start'>
 			<!-- <button id='register'>Register</button>
 			<button id='signIn'>Sign In</button> -->
 			<div class="row userId">
-				<h4>Game Session: 
-					<input type="text" id='username-input'>
+				<h4>Game Session:
+					<input type="text" id='session-input'>
 				</h4>
 				<div class="row">
-					<h4>Player Name: 
-						<input type="text" id='password-input'>
+					<h4>Player Name:
+						<input type="text" id='name-input'>
 					</h4>
 				</div>
-			</div>	
+			</div>
 			<div class="row">
-				<button type="submit" id="submit" name="Sign In">Submit Username</button>
+				<button type="submit" id="submit1" name="Sign In">Submit Username</button>
 			</div>
 
 		</form>
-		<!-- <div class="row justify-content-md-center">
-			<div class="col col-md-3 m-3" id="rowButton">
-				<button class="btn btn-warning btn-lg text-white" id="1">Player 1</button>
-				<img class="hidden" id="check1" src="images/checked.png">
-			</div>
-			<div class="col col-md-3 m-3">
-				<button class="btn btn-danger btn-lg" id="2">Player 2</button>
-				<img class="hidden" id="check2" src="images/checked.png">
-			</div>
-		</div>
-		<div class="row justify-content-md-center">
-			<div class="col col-md-3 m-3" id="rowButton">
-				<button  class="btn btn-primary btn-lg" id="3">Player 3</button>
-				<img class="hidden" id="check3" src="images/checked.png">
-			</div>
-			<div class="col col-md-3 m-3">
-				<button class="btn btn-success btn-lg" id="4">Player 4</button>
-				<img class="hidden" id="check4" src="images/checked.png">
-			</div>
-        	</div> -->
-        
-	
-    </div>
-    <!-- //ju- added my divs  -->
-    <div class="formContainer"></div>
-    <div class="voteContainer"></div> 
+	<!-- </div>		 -->
+		
 
- <!-- JQuery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
-<!-- <script type="text/javascript" src="javascript/mygame-ec.js"></script> -->
-<script type="text/javascript" src="javascript/name-input.js"></script>
+		<!-- </div> -->
+		<!-- //ju- added my divs  -->
+		<div class="formContainer"></div>
+		<div class="voteContainer"></div>
+
+		<!-- JQuery -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+		<!-- <script type="text/javascript" src="javascript/game.js"></script> -->
+		<script type="text/javascript" src="javascript/name-input.js"></script>
 
 
 
 </body>
+
 </html>

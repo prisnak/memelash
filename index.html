@@ -16,59 +16,48 @@
 
 <body id="corpo">
     	
-	<!-- game name-->
-	<div class="row">
-		<img class="col-xs-4 text-center mx-auto m-2" src="images/logoMeme.png">
-	</div>
-    
+	<!-- game name MOVE UP-->
+    <img class="text-center mx-auto logo" src="images/logoMeme.png">
 
-	<!-- score-->
-	<div class="row mx-auto" id="scoreContainer">
-	<div class="scoreDiv hidden justify-content-between m-3 text-center"></div>
+	<!-- score MOVE DOWN-->
+	<div class="row justify-content-md-center">
+	<div class="scoreDiv hidden m-3"></div>
 	</div>
-
 	<div class="timer"></div>
-
     <div class="gameNotifier"></div>
 
 	<!-- homepage main image: Gotta Go Fast-->
 	<div id="mainImg">
-		<div class="row">
-			<div class="col-1"></div>
-			<div class="col-1 ml-3 text-center" id="watchers">		
-			</div><p class="col-1">watchers</p>
-		</div>
-	
-    <img class="rounded mx-auto d-block" id="gottaGoImg" src="images/gottagofast.jpg">
+    <img class="rounded mx-auto d-block m-3" id="gottaGoImg" src="images/gottagofast.jpg">
     </div>
 
 
     <div class="messageContainer"></div>    
-    <div class="displayImage m-3"></div>
+    <div class="displayImage mb-2 mt-2"></div>
 
 	<!-- text -->
-
-	<h2 class="h2 mx-auto mt-3 mb-3 text-center" id='h2P'>PICK A PLAYER TO PLAY</h2>
+	<!-- //ju-added text color similar to notifier style so user has direction during game -->
+	<h2 class="h2 mx-auto" id='h2P' style='color:orangered'>PICK A PLAYER TO PLAY</h2>
 
 	<!-- div with players buttons and checked images -->
 	<div class="container">
 
 		<div class="row justify-content-md-center">
-			<div class="col col-md-3 m-2" id="rowButton">
+			<div class="col col-md-3 m-3" id="rowButton">
 				<button class="btn btn-warning btn-lg text-white" id="1">Player 1</button>
 				<img class="hidden" id="check1" src="images/checked.png">
 			</div>
-			<div class="col col-md-3 m-2">
+			<div class="col col-md-3 m-3">
 				<button class="btn btn-danger btn-lg" id="2">Player 2</button>
 				<img class="hidden" id="check2" src="images/checked.png">
 			</div>
 		</div>
 		<div class="row justify-content-md-center">
-			<div class="col col-md-3 m-2" id="rowButton">
+			<div class="col col-md-3 m-3" id="rowButton">
 				<button  class="btn btn-primary btn-lg" id="3">Player 3</button>
 				<img class="hidden" id="check3" src="images/checked.png">
 			</div>
-			<div class="col col-md-3 m-2">
+			<div class="col col-md-3 m-3">
 				<button class="btn btn-success btn-lg" id="4">Player 4</button>
 				<img class="hidden" id="check4" src="images/checked.png">
 			</div>
@@ -83,12 +72,12 @@
 
  <!-- JQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
 
-<script type="text/javascript" src="javascript/game-firebase.js"></script>
-<!-- <script type="text/javascript" src="javascript/game.js"></script> -->
+<!-- <script type="text/javascript" src="javascript/new-copy.js"></script> -->
 
-
+<script type="text/javascript" src="javascript/game.js"></script>
 
 
 </body>
