@@ -42,8 +42,14 @@ body{
 }
 
 .image img{
+<<<<<<< HEAD
+	/*height: 264px;*/
+	width: 90%;
+	text-align: center;
+=======
 	height: 264px;
 	width: 370px;
+>>>>>>> a4857be65f1e6b822bcc5f3d7fcb8e8000d9e1ab
 }
 
 #displayImage {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <p>Search Game Session:
+            <input type="text" id="searchGame">
+        </p>
+        <p>Create Player Name:
+            <input type="text" id="playerName">
+        </p>
+        <button id="searchGame">search movie</button>
+    </form>
+
+    <!-- Firebase Reference -->
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Script -->
+    <script type="text/javascript">
+    var config = {
+        apiKey: "AIzaSyAe7DlB7RVw2fnY71443yayzDeGV3X7o_Q",
+        authDomain: "raiders-project-revised.firebaseapp.com",
+        databaseURL: "https://raiders-project-revised.firebaseio.com",
+        projectId: "raiders-project-revised",
+        storageBucket: "raiders-project-revised.appspot.com",
+        messagingSenderId: "942825604688"
+    };
+    var game;
+
+    firebase.initializeApp(config);
+
+    // Create a variable to reference the database.
+    var database = firebase.database();
+
+    $('#searchGame').on('click', function() {
+        event.preventDefault();
+
+        var gameSess = $('#searchGame').val().trim();
+        var playerName = $('#playerName').val().trim();
+        database.ref(game).on("child_added", function(childSnapshot) {
+            var rating = childSnapshot.val().rating;  
+            debugger;
+
+            total += parseInt(rating);
+
+            count++;
+
+            average = total/count;
+            $('#rating').text(average);
+        });
+
+        database.ref(game).push({
+            playerName: playerName
+        });
+    });    
+
+    $('#searchGame').on('submit', function() {
+        event.preventDefault();
+
+        var rating = $('#ratingSelect').val();
+
+    });
+
+    </script>   
+</body>
+</html>
