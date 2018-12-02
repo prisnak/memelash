@@ -55,7 +55,6 @@ $(document).on("click", "#submit1", function() {
       playerName: myName,
       player_points: 0
     });
-
     //this grabs all of the randomly generated child keys from /players path
     database.ref(session + "/players").on("child_added", function(snap) {
       fbKey = snap.key;
@@ -72,6 +71,8 @@ $(document).on("click", "#submit1", function() {
         gameInfo();
       });
       console.log(`new key joined ${fbKey}`);
+      $(".startContainer").empty();
+      $("#h2P").text("waiting for more players!");
     });
   }
   database
@@ -271,13 +272,18 @@ $(document).on("click", "#submit", function() {
       });
       captionRef.on("value", function(snapCap) {
         fbCaption = snapCap.val();
+        var captionOb = {
+          playerId: fbId,
+          playerCaption: fbCaption,
+          capKey: captionKey
+        };
+        submitArr.push(captionOb);
       });
-      captionOb = {
-        playerId: fbId,
-        playerCaption: fbCaption,
-        capKey: captionKey
-      };
-      submitArr.push(captionOb);
+      //   captionOb = {
+      //     playerId: fbId,
+      //     playerCaption: fbCaption,
+      //     capKey: captionKey
+      //   };
     });
   }
   console.log(caption);
