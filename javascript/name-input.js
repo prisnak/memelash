@@ -8,6 +8,8 @@ var config = {
 };
 firebase.initializeApp(config);
 var database = firebase.database();
+var connectionsRef = database.ref("/connections");
+var connectedRef = database.ref(".info/connected");
 var topic = [
   "funny",
   "beer",
@@ -51,6 +53,13 @@ $(document).on("click", "#submit1", function() {
     .append(captionsHUD);
   myName = $("#name-input").val();
   if (session || myName != "") {
+    connectedRef.on("value", function(snap) {
+      if (snap.val()) {
+        var con = connectionsRef.push(true);
+        con.onDisconnect().remove();
+        console.log(`line 60: connected`);
+      }
+    });
     database.ref(session + "/players").push({
       playerName: myName,
       player_points: 0
@@ -80,7 +89,7 @@ $(document).on("click", "#submit1", function() {
     .child("players")
     .on("value", function(snap) {
       var playersNum = snap.numChildren();
-      console.log(playersNum);
+      // console.log(playersNum);
       if (playersNum >= 2) {
         $("#h2P").text("Get Ready!");
         seconds = 5;
@@ -236,6 +245,7 @@ function createForm() {
 //SUBMITTING CAPTIONS
 
 //push up to firebase = caption, player, id
+var fbId, fbCaption, captionKey;
 
 $(document).on("click", "#submit", function() {
   event.preventDefault();
@@ -255,44 +265,51 @@ $(document).on("click", "#submit", function() {
     $("#text").val("");
     database.ref(session + "/submits").push({
       _id: myKey,
-      _caption: caption
-    });
-    database.ref(session + "/submits").on("child_added", function(snap) {
-      // console.log(snap.key);
-      var captionKey = snap.key;
-      var captionRef = database.ref(
-        session + "/submits/" + captionKey + "/_caption"
-      );
-      var captionIdRef = database.ref(
-        session + "/submits/" + captionKey + "/_id"
-      );
-      var fbId, fbCaption;
-      captionIdRef.on("value", function(snapId) {
-        fbId = snapId.val();
-      });
-      captionRef.on("value", function(snapCap) {
-        fbCaption = snapCap.val();
-        var captionOb = {
-          playerId: fbId,
-          playerCaption: fbCaption,
-          capKey: captionKey
-        };
-        submitArr.push(captionOb);
-      });
-      //   captionOb = {
-      //     playerId: fbId,
-      //     playerCaption: fbCaption,
-      //     capKey: captionKey
-      //   };
+      _caption: caption,
+      dateAdded: firebase.database.ServerValue.TIMESTAMP
     });
   }
-  console.log(caption);
-  console.log(submitArr);
 });
 
 // VOTING FUNCTION
 // FIX FIX FIX USER ONLY SEES OWN CAPTION AND NOT OTHER PLAYERS
 function voteRound() {
+  // database
+  //   .ref(session + "/submits")
+  //   .orderByChild("dateAdded")
+  //   .limitToFirst(2)
+  //   .on("value", function(snap) {
+  //     // console.log(snap.key);
+  //     captionKey = snap.key;
+  //     fbId = snap.val()._id; //player's id
+  //     fbCaption = snap.val()._caption; // player's caption
+  //     console.log(`captions key: ${captionKey}`);
+  //     console.log(`player's id: ${fbId}`);
+  //     console.log(`player's caption: ${fbCaption}`);
+  //     var captionOb = {
+  //       playerId: fbId,
+  //       playerCaption: fbCaption,
+  //       capKey: captionKey
+  //     };
+  //     submitArr.push(captionOb);
+  //     console.log(submitArr);
+
+  //   });
+  database.ref(session + "/submits").once("value", function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      captionKey = childSnapshot.key;
+      fbCaption = childSnapshot.val()._caption;
+      fbId = childSnapshot.val()._id;
+      var captionOb = {
+        playerId: fbId,
+        playerCaption: fbCaption,
+        capKey: captionKey
+      };
+      submitArr.push(captionOb);
+      console.log(submitArr);
+    });
+  });
+
   pageIndex = 2;
   $(".formContainer").empty();
   var notify = $("<h4>")
@@ -334,7 +351,6 @@ function showResults() {
   $(".messageContainer").html(voted);
   userVote = q;
   console.log(userVote);
-  debugger;
   if (q == 1) {
     userScore = userScore + 2;
     $(".voteContainer").empty();
