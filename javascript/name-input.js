@@ -184,7 +184,7 @@ function findMeme() {
     .attr("id", "notifier");
   $(".gameNotifier").html(notify);
   createForm();
-  seconds = 11;
+  seconds = 20;
   clearInterval(timer);
   timer = setInterval(setTimer, 1000);
   rn = Math.floor(Math.random() * 24) + 1;
