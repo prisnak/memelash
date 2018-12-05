@@ -8,6 +8,8 @@ var config = {
 };
 firebase.initializeApp(config);
 var database = firebase.database();
+var connectionsRef = database.ref("/connections");
+var connectedRef = database.ref(".info/connected");
 var topic = [
   "funny",
   "beer",
@@ -38,6 +40,7 @@ var submitArr = [];
 var caption;
 var submitNum = submitArr.length;
 var submitOb;
+var userVote = 0;
 $(".gameInfo").empty();
 //TAKE INPUT session and player, RETURNS game screen
 $(document).on("click", "#submit1", function() {
@@ -51,6 +54,13 @@ $(document).on("click", "#submit1", function() {
     .append(captionsHUD);
   myName = $("#name-input").val();
   if (session || myName != "") {
+    connectedRef.on("value", function(snap) {
+      if (snap.val()) {
+        var con = connectionsRef.push(true);
+        con.onDisconnect().remove();
+        console.log(`line 60: connected`);
+      }
+    });
     database.ref(session + "/players").push({
       playerName: myName,
       player_points: 0
@@ -80,7 +90,7 @@ $(document).on("click", "#submit1", function() {
     .child("players")
     .on("value", function(snap) {
       var playersNum = snap.numChildren();
-      console.log(playersNum);
+      // console.log(playersNum);
       if (playersNum >= 2) {
         $("#h2P").text("Get Ready!");
         seconds = 5;
@@ -118,9 +128,17 @@ function gameInfo() {
 }
 //need to sync this to other player's browsers (do last -try at least)
 //========================
+var seconds;
+
 function setTimer() {
   seconds = seconds - 1;
   database.ref(session).update({ timer: seconds });
+  // database.ref(session).on("child_changed", function(snap){
+  //   if(snap.child("timer").exists()){
+  //     seconds = snap.val().seconds;
+  //   }
+  //   // console.log(snap.val());
+  // })
   var makeTimer = $("<h3>").html(`Time Remaining: ${seconds}`);
   $(".timer").html(makeTimer);
   if (pageIndex == 0) {
@@ -158,7 +176,12 @@ function setTimer() {
       finalResults();
     }
     if (seconds === 0) {
+      // debugger;
       submitArr.splice(0, submitArr.length);
+      resultsArr.splice(0, resultsArr.length);
+      database.ref(session).update({
+        submits: []
+      });
       findMeme();
     }
   }
@@ -236,6 +259,7 @@ function createForm() {
 //SUBMITTING CAPTIONS
 
 //push up to firebase = caption, player, id
+var fbId, fbCaption, captionKey;
 
 $(document).on("click", "#submit", function() {
   event.preventDefault();
@@ -255,44 +279,31 @@ $(document).on("click", "#submit", function() {
     $("#text").val("");
     database.ref(session + "/submits").push({
       _id: myKey,
-      _caption: caption
-    });
-    database.ref(session + "/submits").on("child_added", function(snap) {
-      // console.log(snap.key);
-      var captionKey = snap.key;
-      var captionRef = database.ref(
-        session + "/submits/" + captionKey + "/_caption"
-      );
-      var captionIdRef = database.ref(
-        session + "/submits/" + captionKey + "/_id"
-      );
-      var fbId, fbCaption;
-      captionIdRef.on("value", function(snapId) {
-        fbId = snapId.val();
-      });
-      captionRef.on("value", function(snapCap) {
-        fbCaption = snapCap.val();
-        var captionOb = {
-          playerId: fbId,
-          playerCaption: fbCaption,
-          capKey: captionKey
-        };
-        submitArr.push(captionOb);
-      });
-      //   captionOb = {
-      //     playerId: fbId,
-      //     playerCaption: fbCaption,
-      //     capKey: captionKey
-      //   };
+      _caption: caption,
+      dateAdded: firebase.database.ServerValue.TIMESTAMP,
+      votes: [],
+      _voteCount: 0
     });
   }
-  console.log(caption);
-  console.log(submitArr);
 });
 
 // VOTING FUNCTION
 // FIX FIX FIX USER ONLY SEES OWN CAPTION AND NOT OTHER PLAYERS
 function voteRound() {
+  database.ref(session + "/submits").once("value", function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      captionKey = childSnapshot.key;
+      fbCaption = childSnapshot.val()._caption;
+      fbId = childSnapshot.val()._id;
+      var captionOb = {
+        playerId: fbId,
+        playerCaption: fbCaption,
+        capKey: captionKey
+      };
+      submitArr.push(captionOb);
+      console.log(submitArr);
+    });
+  });
   pageIndex = 2;
   $(".formContainer").empty();
   var notify = $("<h4>")
@@ -307,15 +318,40 @@ function voteRound() {
     var uId = submitArr[i].playerId;
     var radioDiv = $("<div>").addClass("radio");
     var createChoices = $(
-      `<input type="radio" name="a" value=${i} data-id=${cId} data-uid=${uId}>`
+      `<input type="radio" name="a" value=${cId} data-id=${cId} data-uid=${uId}>`
     ).attr("id", "radio");
     var createLabel = $("<label>").text(c);
     radioDiv.append(createChoices).append(createLabel);
     $(".gameNotifier").html(notify);
     $(".voteContainer").append(radioDiv);
-
     //push votes into another object that will go up to firebase. take vote value, caption's submit id, and also user's id. use count in firebase to find which value is found most.
   }
+}
+$(document).on("click", "#radio", function() {
+  var q = $(`input:radio[name=a]:checked`).val();
+  if (q) {
+    database.ref(session + "/submits/" + q + "/votes").push({
+      _playerId: myKey
+    });
+    database
+      .ref(session + "/submits/" + q + "/votes")
+      .on("value", function(snap) {
+        var voteCount = snap.numChildren();
+        console.log(voteCount);
+        database.ref(session + "/submits/" + q).update({
+          _voteCount: parseFloat(voteCount)
+        });
+      });
+    $(".voteContainer").empty();
+  }
+});
+
+var resultsArr = [];
+var winningCaption;
+function findWinningCaption() {
+  resultsArr.sort(function(a, b) {
+    return b._voteCount - a._voteCount;
+  });
 }
 //RESULTS FUNCTION
 function showResults() {
@@ -326,26 +362,58 @@ function showResults() {
   var notify = $("<h4>")
     .text("get ready for the next round")
     .attr("id", "notifier");
-  var q = parseInt($(`input:radio[name='a']:checked`).val());
-  var voted = $("<h4>")
-    .attr("id", "userText")
-    .html(`the winner is: ${userInput}`);
-  $(".gameNotifier").html(notify);
-  $(".messageContainer").html(voted);
-  userVote = q;
-  console.log(userVote);
-  debugger;
-  if (q == 1) {
-    userScore = userScore + 2;
-    $(".voteContainer").empty();
-    //sync to database
-    console.log(q);
-    database.ref(session + "/players/" + myKey).update({
-      player_points: userScore,
-      player_submit_pos: q
+  database
+    .ref(session + "/submits")
+    .orderByChild("_voteCount")
+    .once("value", function(snapshot) {
+      snapshot.forEach(function(childSnap) {
+        resPlayerId = childSnap.val()._id;
+        resCaptionId = childSnap.val()._caption;
+        resVoteCount = childSnap.val()._voteCount;
+        var resOb = {
+          _caption: resCaptionId,
+          _playerId: resPlayerId,
+          _voteCount: resVoteCount
+        };
+        resultsArr.push(resOb);
+        // console.log(resultsArr);
+      });
+      findWinningCaption();
+      console.log("winning array below");
+      console.log(resultsArr);
+      winningCaption = {
+        _caption: resultsArr[0]._caption,
+        _playerId: resultsArr[0]._playerId,
+        _voteCount: resultsArr[0]._voteCount
+      };
+      for (i = 1; i < resultsArr.length; i++) {
+        if (winningCaption._voteCount == resultsArr[i]._voteCount) {
+          console.log("tied");
+        } else {
+          console.log(`winner : ${winningCaption._caption}`);
+          var voted = $("<h4>")
+            .attr("id", "userText")
+            .html(`the winner is: ${winningCaption._caption}`);
+          $(".messageContainer").html(voted);
+          if (winningCaption._playerId == myKey) {
+            console.log("you won");
+            var score;
+            database
+              .ref(session + "/players/" + myKey)
+              .on("value", function(snap) {
+                console.log(`current score : ${snap.val().player_points}`);
+                var resScore = snap.val().player_points;
+                score = parseFloat(resScore + 2);
+                console.log(score);
+              });
+            database.ref(session + "/players/" + myKey).set({
+              player_points: score
+            });
+            //ISSUE: when there is a winner, app pushes a new player in "null" but has the same id as the winning id. not sure why
+          } else console.log("you did not win this round");
+        }
+      }
     });
-    return;
-  }
 }
 //RESULTS ONCLICK FUNCTION
 $(document).on("click", "#result", function() {
@@ -374,5 +442,6 @@ function finalResults() {
     $(".messageContainer").html(`<h3>${player} wins!</h3>`);
   } else {
     console.log("score not reached");
+    // debugger;
   }
 }
