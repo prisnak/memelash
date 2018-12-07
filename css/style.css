@@ -10,7 +10,7 @@ body{
 }
 
 /*font*/
-*, #h2P{
+*, #h1P{
 	font-family: 'Reem Kufi', sans-serif;
 	text-transform: lowercase;
 }
@@ -41,15 +41,13 @@ body{
 	width: 370px;
 }
 
+
+
 .image img{
-<<<<<<< HEAD
-	/*height: 264px;*/
 	width: 90%;
 	text-align: center;
-=======
-	height: 264px;
-	width: 370px;
->>>>>>> a4857be65f1e6b822bcc5f3d7fcb8e8000d9e1ab
+	/* height: 264px; */
+	/* width: 370px; */
 }
 
 #displayImage {
@@ -98,4 +96,193 @@ body{
 
 label{
 	margin-left: 10px;
+}
+
+
+@media only screen 
+and (min-device-width : 375px) 
+and (max-device-width : 812px) 
+and (-webkit-device-pixel-ratio : 3)
+and (orientation : portrait) { 
+	/* STYLES GO HERE */ 
+	#title  {
+		padding-top: 5%;
+		padding-bottom: 2%; 
+		width: 100%;
+		height: 30%;
+	}
+	#mainImg {
+		width: 100%;
+		height: 100%;
+		margin: 0 auto;
+	}
+
+	.image {
+		width: 100%;
+		height: 100%;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	#gottaGoImg {
+		height: 600px;
+	}
+	/*font*/
+	*{
+		font-family: 'Reem Kufi', sans-serif;
+		/* text-transform: lowercase; */
+	}
+	#h1P {
+		font-size: 90px;
+		padding-bottom: 10%;
+	}
+	h4, h3 {
+		font-size: 70px;
+		margin-bottom: 5%;
+	}
+
+	#session {
+		font-size: 55px;
+	}
+	#player {
+		font-size: 45px;
+	}
+	.timer {
+		font-size: 70px;
+		margin-bottom: 3%;
+	}
+
+	#timer {
+		margin-bottom: 0%;
+	}
+
+	.displayImage {
+		width: 90%;
+		margin: 0 auto;
+		display: block;
+		/* border: 1px solid red; */
+	}
+
+	#memeImage {
+		height: 312px;
+		width: 312px;
+	}
+	.formDiv {
+		position: absolute;
+		bottom: 27px;
+		left: 10%;
+		width: 80%;
+		margin-bottom: 5%;
+		margin-top: 5%;
+		height: 708px;
+	}
+
+	#session-input, #name-input {
+		font-size: 70px;
+		margin-bottom: 5%;
+	}
+
+	#submit1 {
+		font-size: 75px;
+		font-weight: 800;
+		color: black;
+		background-color: #F7E53B;
+		margin-bottom: 15%;
+		margin-top: 10%;
+		padding: 5%;
+	}
+
+	.gameInfo {
+    	height: 20%;
+	}
+
+	/*logo*/
+	.logo{
+		margin-top: 10px;
+	}
+
+	/*hiding checked image*/
+	.hidden{
+		display: none;
+	}
+
+	/*score div position*/
+	.scoreDiv{
+		align-items: center;
+		justify-content: center;
+	}
+
+	/*close button*/
+	.close{
+		font-size: 30px;
+	}
+
+	/*div with all scores */
+	.divVotes{
+		width: 370px;
+	}
+/* 
+	.image {
+		width: 90%;
+		text-align: center;
+		height: 264px;
+		width: 370px; 
+	} */
+
+	#displayImage {
+		height: 100%;
+		width: 100%;
+	}
+	.scoreDiv {
+		width: 370px;
+		height: 75px;
+	}
+
+	.score {
+		/* text-align: center; 
+		float: left;
+		color: ghostwhite;
+		border-radius: 50%;
+		height: 30px;
+		width: 30px; */
+		padding: 24px;
+	}
+	#player1, #player2, #player3, #player4 { 
+		height: 100%; 
+		width: 70px;
+	}
+
+	/* ju-added css to text color for some notifiers */
+	#warning {
+		color: red;
+	}
+	#notifier {
+		color: orangered;
+		text-decoration: underline;
+	}
+	#submit, #result {
+		color:ghostwhite;
+		background-color: slateblue;
+		border: none;
+		/* margin-left: 10px; */
+		border-radius: 3px;
+		width: 69%;
+		height: 146px;
+		font-size: 70px;
+		margin-top: 5%;
+	}
+
+	#textfield{
+		position: relative;
+		margin-bottom: 3%;
+		/* margin-top: 30%; */	
+		padding: 5%;
+		width: 100%;
+		height: 77%;
+		font-size: 90px;
+	}
+
+	label{
+		margin-left: 10px;
+	}
 }
