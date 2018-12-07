@@ -216,6 +216,7 @@ function setTimer() {
   if (pageIndex == 3) {
     if (seconds === 5) {
       finalResults();
+      // console.log("hi");
     }
     if (seconds === 0) {
       submitArr.splice(0, submitArr.length);
@@ -454,8 +455,8 @@ function showResults() {
             .attr("id", "userText")
             .html(`the winner is: ${winningCaption._caption}`);
           $(".messageContainer").html(voted);
-        }
-        else if (winningCaption._playerId == myKey) {
+          showWinner();
+        } else if (winningCaption._playerId == myKey) {
           console.log("you won");
           var score;
           database
@@ -469,6 +470,10 @@ function showResults() {
           database.ref(session + "/players/" + myKey).update({
             player_points: score
           });
+          var voted = $("<h4>")
+            .attr("id", "userText")
+            .html(`the winner is: ${winningCaption._caption}`);
+          $(".messageContainer").html(voted);
           gameUpdate();
           //ISSUE: when there is a winner, app pushes a new player in "null" but has the same id as the losing id. not sure why
         } else {
@@ -487,94 +492,59 @@ $(document).on("click", "#result", function() {
   showResults();
 });
 //FINAL RESULTS FUNCTION
-// function finalResults() {
-//   var checkArr = [];
-//   var winner;
-//   var winnerId;
-//   var resWinner = "";
-//   database
-//     .ref(session + "/players")
-//     .orderByChild("player_points")
-//     .once("value", function(snap) {
-//       snap.forEach(function(childSnap) {
-//         var resPlayerId = childSnap.key;
-//         var resPlayerName = childSnap.val().playerName;
-//         var resPlayerPoints = childSnap.val().player_points;
-//         var resPlayerOb = {
-//           id: resPlayerId,
-//           name: resPlayerName,
-//           points: resPlayerPoints
-//         };
-//         checkArr.push(resPlayerOb);
-//       });
-//       sortLeadingPlayers(checkArr);
-//     });
-//   for (i in checkArr) {
-//     if (checkArr[i].points >= winningScore) {
-//       winner = checkArr[i].name;
-//       winnerId = checkArr[i].id;
-//       console.log(`winner : ${winner} id : ${winnerId}`);
-//       database.ref(session + "/players/" + winnerId).update({
-//         _winner: true
-//       });
-//     } else console.log("score not reached");
-
-//     // if (resWinner != "") {
-//     //   pageIndex = 4;
-//     //   clearInterval(timer);
-//     //   console.log("score reached");
-//     //   $(".timer").empty();
-//     //   $(".messageContainer").empty();
-//     //   // $('.displayImage').empty();
-//     //   $(".gameNotifier").empty();
-//     //   $(".voteContainer").empty();
-//     //   var makeImg = $("<img>")
-//     //     .attr("src", "https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif")
-//     //     .attr("alt", "winner")
-//     //     .css("width", "370px")
-//     //     .css("height", "264px");
-//     //   $(".displayImage").html(makeImg);
-//     //   $(".messageContainer").html(`<h3>${resWinner} wins!</h3>`);
-//     //   debugger;
-//     // } else console.log("score not reached");
-//   }
-//   database
-//   .ref(session + "/players")
-//   .orderByChild("_winner")
-//   .equalTo(true)
-//   .on("value", function(snap) {
-//     console.log(snap.val());
-//     resWinner = snap.val().playerName;
-//     console.log(resWinner);
-//   });
-// }
-
 function finalResults() {
   var checkArr = [];
   var winner;
   var winnerId;
   var resWinner = "";
-  var pName = "";
   database
     .ref(session + "/players")
     .orderByChild("player_points")
-    .equalTo(winningScore)
+    .once("value", function(snap) {
+      snap.forEach(function(childSnap) {
+        var resPlayerId = childSnap.key;
+        var resPlayerName = childSnap.val().playerName;
+        var resPlayerPoints = childSnap.val().player_points;
+        var resPlayerOb = {
+          id: resPlayerId,
+          name: resPlayerName,
+          points: resPlayerPoints
+        };
+        checkArr.push(resPlayerOb);
+      });
+      sortLeadingPlayers(checkArr);
+    });
+  for (i in checkArr) {
+    if (checkArr[i].points >= winningScore) {
+      winner = checkArr[i].name;
+      winnerId = checkArr[i].id;
+      console.log(`winner : ${winner} id : ${winnerId}`);
+      database.ref(session + "/players/" + winnerId).update({
+        _winner: true
+      });
+      showWinner();
+    } else console.log("score not reached");
+  }
+}
+
+function showWinner() {
+  database
+    .ref(session + "/players")
+    .orderByChild("_winner")
+    .equalTo(true)
     .on("value", function(snap) {
       var ob = snap.val();
-      pName;
       for (key in ob) {
-        pName = ob[key].playerName;
-        // console.log(pName);
+        resWinner = ob[key].playerName;
       }
-      console.log(pName);
     });
-  if (pName != "") {
+  if (resWinner != "") {
     pageIndex = 4;
     clearInterval(timer);
     console.log("score reached");
     $(".timer").empty();
     $(".messageContainer").empty();
-    $(".displayImage").empty();
+    // $('.displayImage').empty();
     $(".gameNotifier").empty();
     $(".voteContainer").empty();
     var makeImg = $("<img>")
@@ -583,7 +553,44 @@ function finalResults() {
       .css("width", "370px")
       .css("height", "264px");
     $(".displayImage").html(makeImg);
-    $(".messageContainer").html(`<h3>${pName} wins!</h3>`);
-    // debugger;
+    $(".messageContainer").html(`<h3>${resWinner} wins!</h3>`);
   } else console.log("score not reached");
 }
+
+// function finalResults() {
+//   var checkArr = [];
+//   var winner;
+//   var winnerId;
+//   var resWinner = "";
+//   var pName = "";
+//   database
+//     .ref(session + "/players")
+//     .orderByChild("player_points")
+//     .equalTo(winningScore)
+//     .on("value", function(snap) {
+//       var ob = snap.val();
+//       pName;
+//       for (key in ob) {
+//         pName = ob[key].playerName;
+//       }
+//       console.log(pName);
+//     });
+//   if (pName != "") {
+//     pageIndex = 4;
+//     clearInterval(timer);
+//     console.log("score reached");
+//     $(".timer").empty();
+//     $(".messageContainer").empty();
+//     $(".displayImage").empty();
+//     $(".gameNotifier").empty();
+//     $(".voteContainer").empty();
+//     var makeImg = $("<img>")
+//       .attr("src", "https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif")
+//       .attr("alt", "winner")
+//       .css("width", "370px")
+//       .css("height", "264px");
+//     $(".displayImage").html(makeImg);
+//     $(".messageContainer").html(`<h3>${pName} wins!</h3>`);
+//     // debugger;
+//   } else console.log("score not reached");
+// }
