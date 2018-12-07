@@ -294,7 +294,7 @@ function createForm() {
     .attr("type", "submit")
     .attr("value", "submit")
     .attr("id", "submit");
-  $("#text").val("");
+  $("#textfield").val("");
   formDiv.append(textField).append(submitButton);
   $(".formContainer").html(formDiv);
 }
@@ -305,7 +305,7 @@ var fbId, fbCaption, captionKey;
 
 $(document).on("click", "#submit", function() {
   event.preventDefault();
-  caption = $("#text").val();
+  caption = $("#textfield").val();
 
   //changed to 4 for demo purposes
   if (userInput.length >= 1) {
@@ -315,10 +315,12 @@ $(document).on("click", "#submit", function() {
   if (caption == "") {
     return;
   } else if (caption != "") {
-    var b = $("<div>").attr("id", "userCaption");
-    b.text(caption);
+    // var b = $("<div>").attr("id", "userCaption");
+    // b.text(caption);
+    var b = $("<h4 id='userCaption'>");
+    b.html(`You Submitted: ${caption}`);
     $(".messageContainer").html(b);
-    $("#text").val("");
+    $("#textfield").val("");
     $(".formContainer").empty();
     database.ref(session + "/submits").push({
       _id: myKey,
