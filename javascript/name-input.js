@@ -455,7 +455,7 @@ function showResults() {
             .attr("id", "userText")
             .html(`the winner is: ${winningCaption._caption}`);
           $(".messageContainer").html(voted);
-          showWinner();
+          finalResults();
         } else if (winningCaption._playerId == myKey) {
           console.log("you won");
           var score;
@@ -523,7 +523,9 @@ function finalResults() {
         _winner: true
       });
       showWinner();
-    } else console.log("score not reached");
+    } else {
+      console.log("score not reached");
+    }
   }
 }
 
