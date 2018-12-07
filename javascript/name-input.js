@@ -46,6 +46,7 @@ $(".gameInfo").empty();
 //TAKE INPUT session and player, RETURNS game screen
 $(document).on("click", "#submit1", function() {
   event.preventDefault();
+  $('#submit1').addClass('hidden');
   session = $("#session-input").val();
   sessionHUD = $("<p id='session'>").text(`Game Session: ${session}`);
   var captionArr;
@@ -180,7 +181,7 @@ function setTimer() {
   //   }
   //   // console.log(snap.val());
   // })
-  var makeTimer = $("<h3>").html(`Time Remaining: ${seconds}`);
+  var makeTimer = $("<h3 id='timer'>").html(`Time Remaining: ${seconds}`);
   $(".timer").html(makeTimer);
   if (pageIndex == 0) {
     if (seconds == 3) {
@@ -248,7 +249,7 @@ function findMeme() {
     .attr("id", "notifier");
   $(".gameNotifier").html(notify);
   createForm();
-  seconds = 11;
+  seconds = 20;
   clearInterval(timer);
   timer = setInterval(setTimer, 1000);
   rn = Math.floor(Math.random() * 24) + 1;
@@ -268,7 +269,7 @@ function findMeme() {
     // console.log(response);
     var imgDiv = $("<div>").addClass("image");
     var memeSRC = response.result[rn].imageUrl;
-    var makeImg = $("<img>")
+    var makeImg = $("<img id='memeImg'>")
       .attr("src", memeSRC)
       //snap this to the database
       .attr("alt", response.result[rn].urlName);
@@ -288,7 +289,7 @@ function createForm() {
   var textField = $("<input>")
     .attr("type", "text")
     .attr("placeholder", "your caption")
-    .attr("id", "text");
+    .attr("id", "textfield");
   var submitButton = $("<input>")
     .attr("type", "submit")
     .attr("value", "submit")
