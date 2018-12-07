@@ -34,7 +34,7 @@ var topic = [
 var session, myName, id, timer, docP, myKey, fbKey, fbName, userInput;
 var pageIndex = 0;
 var userScore = 0;
-var winningScore = 10;
+var winningScore = 4;
 var playersArr = [];
 var submitArr = [];
 var caption;
@@ -62,7 +62,8 @@ $(document).on("click", "#submit1", function() {
     });
     database.ref(session + "/players").push({
       playerName: myName,
-      player_points: 0
+      player_points: 0,
+      _winner: false
     });
     //this grabs all of the randomly generated child keys from /players path
     database.ref(session + "/players").on("child_added", function(snap) {
@@ -131,8 +132,8 @@ function gameInfo() {
   $(".gameInfo").append(playerHUD);
 }
 var updatedArr = [];
-function sortLeadingPlayers() {
-  resultsArr.sort(function(a, b) {
+function sortLeadingPlayers(arr) {
+  arr.sort(function(a, b) {
     return b.points - a.points;
   });
 }
@@ -156,7 +157,7 @@ function gameUpdate() {
         };
         updatedArr.push(resPlayerOb);
       });
-      sortLeadingPlayers();
+      sortLeadingPlayers(updatedArr);
     });
   for (i in updatedArr) {
     var name = updatedArr[i].name;
@@ -216,9 +217,9 @@ function setTimer() {
   if (pageIndex == 3) {
     if (seconds === 5) {
       finalResults();
+      // console.log("hi");
     }
     if (seconds === 0) {
-      // debugger;
       submitArr.splice(0, submitArr.length);
       resultsArr.splice(0, resultsArr.length);
       database.ref(session).update({
@@ -235,7 +236,7 @@ function setTimer() {
 }
 //MEME GENERATOR FUNCTION
 function findMeme() {
-  gameUpdate();  
+  gameUpdate();
   pageIndex = 1;
   userInput = "";
   userVote = "";
@@ -379,7 +380,7 @@ $(document).on("click", "#radio", function() {
       .ref(session + "/submits/" + q + "/votes")
       .on("value", function(snap) {
         var voteCount = snap.numChildren();
-        console.log(voteCount);
+        // console.log(voteCount);
         database.ref(session + "/submits/" + q).update({
           _voteCount: parseFloat(voteCount)
         });
@@ -449,32 +450,37 @@ function showResults() {
               player_points: score
             });
           gameUpdate();
-        } else {
+        } else if (winningCaption._playerId !== myKey) {
           console.log(`winner : ${winningCaption._caption}`);
           var voted = $("<h4>")
             .attr("id", "userText")
             .html(`the winner is: ${winningCaption._caption}`);
           $(".messageContainer").html(voted);
-          if (winningCaption._playerId == myKey) {
-            console.log("you won");
-            var score;
-            database
-              .ref(session + "/players/" + myKey)
-              .on("value", function(snap) {
-                console.log(`current score : ${snap.val().player_points}`);
-                var resScore = snap.val().player_points;
-                score = parseFloat(resScore + 2);
-                console.log(score);
-              });
-            database.ref(session + "/players/" + myKey).update({
-              player_points: score
+          finalResults();
+        } else if (winningCaption._playerId == myKey) {
+          console.log("you won");
+          var score;
+          database
+            .ref(session + "/players/" + myKey)
+            .on("value", function(snap) {
+              console.log(`current score : ${snap.val().player_points}`);
+              var resScore = snap.val().player_points;
+              score = parseFloat(resScore + 2);
+              console.log(score);
             });
-            gameUpdate();
-            //ISSUE: when there is a winner, app pushes a new player in "null" but has the same id as the losing id. not sure why
-          } else {
-            console.log("you did not win this round");
-            gameUpdate();
-          }
+          database.ref(session + "/players/" + myKey).update({
+            player_points: score
+          });
+          var voted = $("<h4>")
+            .attr("id", "userText")
+            .html(`the winner is: ${winningCaption._caption}`);
+          $(".messageContainer").html(voted);
+          gameUpdate();
+          //ISSUE: when there is a winner, app pushes a new player in "null" but has the same id as the losing id. not sure why
+        } else {
+          console.log("you did not win this round");
+          finalResults();
+          gameUpdate();
         }
       }
     });
@@ -488,7 +494,54 @@ $(document).on("click", "#result", function() {
 });
 //FINAL RESULTS FUNCTION
 function finalResults() {
-  if (userScore == winningScore) {
+  var checkArr = [];
+  var winner;
+  var winnerId;
+  var resWinner = "";
+  database
+    .ref(session + "/players")
+    .orderByChild("player_points")
+    .once("value", function(snap) {
+      snap.forEach(function(childSnap) {
+        var resPlayerId = childSnap.key;
+        var resPlayerName = childSnap.val().playerName;
+        var resPlayerPoints = childSnap.val().player_points;
+        var resPlayerOb = {
+          id: resPlayerId,
+          name: resPlayerName,
+          points: resPlayerPoints
+        };
+        checkArr.push(resPlayerOb);
+      });
+      sortLeadingPlayers(checkArr);
+    });
+  for (i in checkArr) {
+    if (checkArr[i].points >= winningScore) {
+      winner = checkArr[i].name;
+      winnerId = checkArr[i].id;
+      console.log(`winner : ${winner} id : ${winnerId}`);
+      database.ref(session + "/players/" + winnerId).update({
+        _winner: true
+      });
+      showWinner();
+    } else {
+      console.log("score not reached");
+    }
+  }
+}
+
+function showWinner() {
+  database
+    .ref(session + "/players")
+    .orderByChild("_winner")
+    .equalTo(true)
+    .on("value", function(snap) {
+      var ob = snap.val();
+      for (key in ob) {
+        resWinner = ob[key].playerName;
+      }
+    });
+  if (resWinner != "") {
     pageIndex = 4;
     clearInterval(timer);
     console.log("score reached");
@@ -503,9 +556,44 @@ function finalResults() {
       .css("width", "370px")
       .css("height", "264px");
     $(".displayImage").html(makeImg);
-    $(".messageContainer").html(`<h3>${player} wins!</h3>`);
-  } else {
-    console.log("score not reached");
-    // debugger;
-  }
+    $(".messageContainer").html(`<h3>${resWinner} wins!</h3>`);
+  } else console.log("score not reached");
 }
+
+// function finalResults() {
+//   var checkArr = [];
+//   var winner;
+//   var winnerId;
+//   var resWinner = "";
+//   var pName = "";
+//   database
+//     .ref(session + "/players")
+//     .orderByChild("player_points")
+//     .equalTo(winningScore)
+//     .on("value", function(snap) {
+//       var ob = snap.val();
+//       pName;
+//       for (key in ob) {
+//         pName = ob[key].playerName;
+//       }
+//       console.log(pName);
+//     });
+//   if (pName != "") {
+//     pageIndex = 4;
+//     clearInterval(timer);
+//     console.log("score reached");
+//     $(".timer").empty();
+//     $(".messageContainer").empty();
+//     $(".displayImage").empty();
+//     $(".gameNotifier").empty();
+//     $(".voteContainer").empty();
+//     var makeImg = $("<img>")
+//       .attr("src", "https://media1.giphy.com/media/LtLknRg3zywOA/giphy.gif")
+//       .attr("alt", "winner")
+//       .css("width", "370px")
+//       .css("height", "264px");
+//     $(".displayImage").html(makeImg);
+//     $(".messageContainer").html(`<h3>${pName} wins!</h3>`);
+//     // debugger;
+//   } else console.log("score not reached");
+// }
